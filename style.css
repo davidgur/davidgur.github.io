@@ -1,61 +1,20 @@
-body {
-  font-family: 'Inconsolata', monospace;
-  background-color: #eeeeee;
-  color: #444;
-  text-align: left;
+body{font-family:'Inconsolata', monospace;background-color:#eeeeee;color:#444;text-align:left;}
+div{margin-top:10%;margin-left:35%;width:30%;height:100%;-webkit-animation:fadein 2.5s;-moz-animation:fadein 2.5s;-ms-animation:fadein 2.5s;-o-animation:fadein 2.5s;animation:fadein 2.5s;}
+b{font-size:1.5vw;}
+p{font-size:1vw;}
+a{font-size:1.25vw;text-decoration:none;}
+@keyframes fadein{from{opacity:0;}
+to{opacity:1;}
 }
-
-div {
-  margin-top: 10%;
-  margin-left: 35%;
-  width: 30%;
-  height: 100%;
-
-  -webkit-animation: fadein 2.5s; /* Safari, Chrome and Opera > 12.1 */
-   -moz-animation: fadein 2.5s; /* Firefox < 16 */
-    -ms-animation: fadein 2.5s; /* Internet Explorer */
-     -o-animation: fadein 2.5s; /* Opera < 12.1 */
-        animation: fadein 2.5s;
+@-moz-keyframes fadein{from{opacity:0;}
+to{opacity:1;}
 }
-
-b {
-  font-size: 1.5vw;
+@-webkit-keyframes fadein{from{opacity:0;}
+to{opacity:1;}
 }
-
-p {
-  font-size: 1vw;
+@-ms-keyframes fadein{from{opacity:0;}
+to{opacity:1;}
 }
-
-a {
-  font-size: 1.25vw;
-  text-decoration: none;
-}
-
-@keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
-
-/* Firefox < 16 */
-@-moz-keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
-
-/* Safari, Chrome and Opera > 12.1 */
-@-webkit-keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
-
-/* Internet Explorer */
-@-ms-keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
-
-/* Opera < 12.1 */
-@-o-keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+@-o-keyframes fadein{from{opacity:0;}
+to{opacity:1;}
 }
