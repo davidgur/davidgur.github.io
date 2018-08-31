@@ -2,11 +2,38 @@
   Really nothing noteworthy here. This is just CSS that I wrote and then minified. 
 */
 
-body{font-family:'Inconsolata', monospace;background-color:#eeeeee;color:#444;text-align:left;}
-div{margin-top:10%;margin-left:35%;width:30%;height:100%;-webkit-animation:fadein 2.5s;-moz-animation:fadein 2.5s;-ms-animation:fadein 2.5s;-o-animation:fadein 2.5s;animation:fadein 2.5s;}
-b{font-size:1.5vw;}
-p{font-size:1vw;}
-a{font-size:1.25vw;text-decoration:none;}
+body {
+	font-family:'Inconsolata', monospace;
+	background-color:#eeeeee;
+	color:#444;
+	text-align:left;
+	line-height: 1.2;
+}
+	 
+div {
+	margin: 40px auto;
+	margin-top: 5%;
+	max-width: 550px;
+	height:100%;
+	-webkit-animation:fadein 2.5s;
+	-moz-animation:fadein 2.5s;
+	-ms-animation:fadein 2.5s;
+	-o-animation:fadein 2.5s;
+	animation:fadein 2.5s;
+}
+
+b {
+	font-size:1.4em;
+}
+
+p {
+	font-size:1.2em;
+}
+a {
+	font-size:1.25em;
+	text-decoration:none;
+}
+
 @keyframes fadein{from{opacity:0;}
 to{opacity:1;}
 }
