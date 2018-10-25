@@ -1,51 +1,81 @@
 /*
-  Really nothing noteworthy here. This is just CSS that I wrote and then minified. 
+  Really nothing noteworthy here. This is just CSS that I wrote and then minified.
 */
 
 body {
-	font-family:'Inconsolata', monospace;
-	background-color:#eeeeee;
-	color:#444;
-	text-align:left;
-	line-height: 1.2;
+  font-family: 'Inconsolata', monospace;
+  background-color: #eeeeee;
+  color: #444;
+  text-align: left;
+  line-height: 1.2;
 }
-	 
+
 div {
-	margin: 40px auto;
-	margin-top: 5%;
-	max-width: 550px;
-	height:100%;
-	-webkit-animation:fadein 2.5s;
-	-moz-animation:fadein 2.5s;
-	-ms-animation:fadein 2.5s;
-	-o-animation:fadein 2.5s;
-	animation:fadein 2.5s;
+  margin: 40px auto;
+  margin-top: 5%;
+  max-width: 550px;
+  height: 100%;
+  -webkit-animation: fadein 2.5s;
+  -moz-animation: fadein 2.5s;
+  -ms-animation: fadein 2.5s;
+  -o-animation: fadein 2.5s;
+  animation: fadein 2.5s;
 }
 
 b {
-	font-size:1.4em;
+  font-size: 1.4em;
 }
 
 p {
-	font-size:1.2em;
-}
-a {
-	font-size:1.25em;
-	text-decoration:none;
+  font-size: 1.2em;
 }
 
-@keyframes fadein{from{opacity:0;}
-to{opacity:1;}
+a {
+  font-size: 1.25em;
+  text-decoration: none;
 }
-@-moz-keyframes fadein{from{opacity:0;}
-to{opacity:1;}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
-@-webkit-keyframes fadein{from{opacity:0;}
-to{opacity:1;}
+
+@-moz-keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
-@-ms-keyframes fadein{from{opacity:0;}
-to{opacity:1;}
+
+@-webkit-keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
-@-o-keyframes fadein{from{opacity:0;}
-to{opacity:1;}
+
+@-ms-keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@-o-keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
