@@ -11,7 +11,7 @@ body {
 }
 
 div {
-  margin: 40px auto;
+  margin: 35px auto;
   margin-top: 5%;
   max-width: 550px;
   height: 100%;
@@ -31,7 +31,6 @@ p {
 }
 
 a {
-  font-size: 1.25em;
   text-decoration: none;
 }
 
