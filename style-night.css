@@ -4,8 +4,8 @@
 
 body {
   font-family: 'Inconsolata', monospace;
-  background-color: #eeeeee;
-  color: #444;
+  background-color: #444444;
+  color: #deded3;
   text-align: left;
   line-height: 1.2;
 }
@@ -31,6 +31,7 @@ p {
 }
 
 a {
+  color: #d5aaaa;
   text-decoration: none;
 }
 

@@ -27,7 +27,21 @@
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="msapplication-config" content="favicons/browserconfig.xml">
   <meta name="theme-color" content="#ffffff">
-  <link href="style.css" rel="stylesheet">
+  
+  <script>
+    function getStylesheet() {
+      var currentTime = new Date().getHours();
+      if (5 <= currentTime && currentTime < 20) {
+        document.write("<link rel='stylesheet' href='style-day.css' type='text/css'>");
+      }
+      else {
+        document.write("<link rel='stylesheet' href='style-night.css' type='text/css'");
+      }
+    }
+
+    getStylesheet();
+  </script>
+
 </head>
 
 <body>
@@ -39,7 +53,7 @@
   			<a href="mailto:david@gurevich.ca">@</a>
       </b>
 
-    <p style="color: #919191"> Software Engineer / Student</p>
+    <p style="color: #a09f9f"> Software Engineer / Student</p>
 
     <p>
       I work primarily with Python and C++ to do data-intensive high performance compute work. Recently, I implemented a web app that allowed users to remotely control signal generation and data acquisition hardware, and then process that data in (soft) real-time.
