@@ -1,11 +1,11 @@
 /*
-  Really nothing noteworthy here. This is just CSS that I wrote and then minified.
+  Really nothing noteworthy here. This is just CSS that I wrote.
 */
 
 body {
   font-family: 'Inconsolata', monospace;
   background-color: #444444;
-  color: #deded3;
+  color: #eeeeee;
   text-align: left;
   line-height: 1.2;
 }
