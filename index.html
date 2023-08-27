@@ -1,12 +1,9 @@
 <!--
     Hello! This is my personal website.
-
-    You can consider this website my elevator pitch, and as such this website took inspiration from the design of an elevator:
-    - Boring
-    - Grey
-    TODO: Add elevator music
+    As you can see, I'm not very good at web design.
 
     - David Gurevich
+      August 2023
 -->
 
 <!DOCTYPE html>
@@ -26,18 +23,15 @@
         <meta name="msapplication-TileColor" content="#ffffff">
         <meta name="msapplication-config" content="favicons/browserconfig.xml">
 
+        <!-- This is me trying to show off. I have an automatic night mode for my website. -->
         <script>
-            function getStylesheet() {
-                var currentTime = new Date().getHours();
-                if (5 <= currentTime && currentTime < 20) {
-                    document.write("<link rel='stylesheet' href='style-day.css' type='text/css'>");
-                }
-                else {
-                    document.write("<link rel='stylesheet' href='style-night.css' type='text/css'");
-                }
+            var currentTime = new Date().getHours();
+            if (5 <= currentTime && currentTime < 20) {
+                document.write("<link rel='stylesheet' href='style-day.css' type='text/css'>");
             }
-
-            getStylesheet();
+            else {
+                document.write("<link rel='stylesheet' href='style-night.css' type='text/css'");
+            }
         </script>
 
     </head>
@@ -54,17 +48,16 @@
             <p style="color: #928374"> Software Engineer / Student</p>
 
             <p>
-            I work primarily with Python and C++ to write performant solutions to complex scientific and industrial problems. I am currently a computer science student at the University of Waterloo.
+            I develop performant solutions to complex scientific and industrial problems. I am currently a computer science and computational mathematics student at the University of Waterloo.
             </p>
 
             <p>
-            I previously worked at Research in Flows, where I worked on the research, architecture, and development of a fully digital phase demodulation system. It was designed as a low-cost solution for phase demodulation of high frequency signals, notably for use in turbulent flow analysis. I worked with Python, C++, and MATLAB to implement a parallelized, high-speed data processing solution.
+            My previous experience has largely revolved around data-intensive embedded systems, like software-defined radios for wireless communications.
+            I also have a number of projects where I worked with digital signal processing, such as a low-cost solution for performing turbulent flow analysis using ultrasonic sensors, and a <a href="https://github.com/davidgur/3d-sound-synthesis/">binaural audio localizer</a>.
             </p>
 
             <p>
-            My most recent position was at <a href="https://appliedmind.ca/">Applied Mind</a>, where I worked on their software-defined radio solution.
-            Specifically, I developed embedded software for the acquisition and processing of LTE signals on their in-house hardware.
-            I also worked on a system that can locate an RF-emitting device using <a href="https://en.wikipedia.org/wiki/Time_of_arrival">TDOA methods</a>, which was then augmented by introducing a Kalman filter.
+            I am also interested in applied research, both in industry and academia. I studied the efficacy of large language models (LLMs) in performing graph clustering tasks at <a href="https://opallab.ca/">OpAL Lab</a>, and, in industry, I iterated on existing algorithms capable of locating an RF-emitting device using <a href="https://en.wikipedia.org/wiki/Time_of_arrival">TDoA</a> with statistical methods.
             </p>
 
             <p>
