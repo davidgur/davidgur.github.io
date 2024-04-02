@@ -14,5 +14,5 @@ Here, I'm testing out some math. Here's some inline math \( f(x) = x^2 + 3x + 4 
 Here's a subscript: \( x_3 \).
 
 Here's the Fourier transform:
-$$ F(\omega) = \int_{\-\infty}^{\infty} f(t) e^{-i 2 \pi \omega t} dt. $$
+$$ F(\omega) = \int_{-\infty}^{\infty} f(t) e^{-i 2 \pi \omega t} dt. $$
 
