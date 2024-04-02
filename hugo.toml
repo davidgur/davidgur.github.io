@@ -1,0 +1,49 @@
+# Base URL used when generating links
+baseURL = 'https://www.gurevich.ca'
+
+# Theme
+theme = 'hugo-bearblog'
+
+# Basic Metadata
+languageCode = 'en-us'
+title = 'David Gurevich'
+author = 'David Gurevich'
+copyright = 'Copyright © 2024, David Gurevich'
+
+# Generate a nice robots.txt for SEO
+enableRobotsTXT = true
+
+# Generate "Bearblog"-like URLs
+disableKinds = ["taxonomy"]
+ignoreErrors = ["error-disable-taxonomy"]
+
+# MathJax stuff
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.extensions]
+      [markup.goldmark.extensions.passthrough]
+        enable = true
+        [markup.goldmark.extensions.passthrough.delimiters]
+          block = [['\[', '\]'], ['$$', '$$']]
+          inline = [['\(', '\)']]
+
+[permalinks]
+  blog = "/:slug/"
+  tags = "/blog/:slug"
+
+[params]
+  # Hide the made-with-line :(
+  hideMadeWithLine = true
+
+  # date format
+  dateFormat = "2006-01-02"
+
+  # profile links
+  emailLink = "mailto:david@gurevich.ca"
+  linkedinLink = "https://www.linkedin.com/in/davidgur/"
+  githubLink = "https://github.com/davidgur"
+  resumeLink = "https://github.com/davidgur/resume/raw/master/resume.pdf"
+
+  # MathJax
+  math = true
+
