@@ -1,6 +1,9 @@
 I develop performant solutions to complex scientific and industrial problems.
-I am currently a computer science and computational mathematics student
-at the University of Waterloo.
+I am currently a product engineer at [Radar](https://radar.com/),
+where I work on search systems, geocoding, machine learning, and some mathematical work to better interface
+between the digital and physical worlds.
+
+I recently graduated from the University of Waterloo with a BMath in Computer Science and Computational Mathematics.
 
 My previous experience has largely revolved around data-intensive embedded systems,
 like software-defined radios for wireless communication.

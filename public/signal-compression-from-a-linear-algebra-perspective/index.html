@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Signal Compression from a Linear Algebra Perspective | David Gurevich</title>
+<meta name="title" content="Signal Compression from a Linear Algebra Perspective" />
+<meta name="description" content="One of my favourite courses from my time at the University of Waterloo was AMATH 391.
+At the time, it had the provocative title From Fourier to Wavelets.
+Nowadays, it has the more sober name Data Analysis with Fourier and Wavelet Methods.
+Honestly, this is probably a better name for the course anyways.
+I want to present to you a somewhat simple concept from this course.
+When we take the Fourier transformation of a signal \(f[t]\), we are finding the infinite dimensional vector
+that represents the signal in the Hilbert space of (usually) continuous functions (call it \(\mathcal{C}\))
+Moreover, in the case of a Fourier analysis, we are representing this vector using a &ldquo;basis&rdquo; of
+infinitely many sinusoids." />
+<meta name="keywords" content="" />
+
+
+<meta property="og:url" content="https://www.gurevich.ca/signal-compression-from-a-linear-algebra-perspective/">
+  <meta property="og:site_name" content="David Gurevich">
+  <meta property="og:title" content="Signal Compression from a Linear Algebra Perspective">
+  <meta property="og:description" content="One of my favourite courses from my time at the University of Waterloo was AMATH 391. At the time, it had the provocative title From Fourier to Wavelets. Nowadays, it has the more sober name Data Analysis with Fourier and Wavelet Methods. Honestly, this is probably a better name for the course anyways.
+I want to present to you a somewhat simple concept from this course.
+When we take the Fourier transformation of a signal \(f[t]\), we are finding the infinite dimensional vector that represents the signal in the Hilbert space of (usually) continuous functions (call it \(\mathcal{C}\)) Moreover, in the case of a Fourier analysis, we are representing this vector using a “basis” of infinitely many sinusoids.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2025-07-10T21:31:30-04:00">
+    <meta property="article:modified_time" content="2025-07-10T21:31:30-04:00">
+
+
+
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Signal Compression from a Linear Algebra Perspective">
+  <meta name="twitter:description" content="One of my favourite courses from my time at the University of Waterloo was AMATH 391. At the time, it had the provocative title From Fourier to Wavelets. Nowadays, it has the more sober name Data Analysis with Fourier and Wavelet Methods. Honestly, this is probably a better name for the course anyways.
+I want to present to you a somewhat simple concept from this course.
+When we take the Fourier transformation of a signal \(f[t]\), we are finding the infinite dimensional vector that represents the signal in the Hilbert space of (usually) continuous functions (call it \(\mathcal{C}\)) Moreover, in the case of a Fourier analysis, we are representing this vector using a “basis” of infinitely many sinusoids.">
+
+
+
+
+  <meta itemprop="name" content="Signal Compression from a Linear Algebra Perspective">
+  <meta itemprop="description" content="One of my favourite courses from my time at the University of Waterloo was AMATH 391. At the time, it had the provocative title From Fourier to Wavelets. Nowadays, it has the more sober name Data Analysis with Fourier and Wavelet Methods. Honestly, this is probably a better name for the course anyways.
+I want to present to you a somewhat simple concept from this course.
+When we take the Fourier transformation of a signal \(f[t]\), we are finding the infinite dimensional vector that represents the signal in the Hilbert space of (usually) continuous functions (call it \(\mathcal{C}\)) Moreover, in the case of a Fourier analysis, we are representing this vector using a “basis” of infinitely many sinusoids.">
+  <meta itemprop="datePublished" content="2025-07-10T21:31:30-04:00">
+  <meta itemprop="dateModified" content="2025-07-10T21:31:30-04:00">
+  <meta itemprop="wordCount" content="269">
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  body {
+    font-family: Verdana, sans-serif;
+    margin: auto;
+    padding: 20px;
+    max-width: 720px;
+    text-align: left;
+    background-color: #fff;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: #444;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  strong,
+  b {
+    color: #222;
+  }
+
+  code.has-jax {font: inherit;
+              font-size: 100%;
+              background: inherit;
+              border: inherit;
+              color: #515151;
+  }
+
+
+  a {
+    color: #3273dc;
+     
+  }
+
+  .title {
+    color: #222;
+    text-decoration: none;
+    border: 0;
+  }
+
+  .profile-link {
+    text-decoration: none;
+  }
+
+  .title span {
+    font-weight: 400;
+  }
+
+  nav a {
+    margin-right: 10px;
+  }
+
+  textarea {
+    width: 100%;
+    font-size: 16px;
+  }
+
+  input {
+    font-size: 16px;
+  }
+
+  content {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    padding: 2px 5px;
+    background-color: #f2f2f2;
+  }
+
+  pre code {
+    color: #222;
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 14px;
+    overflow-x: auto;
+  }
+
+  div.highlight pre {
+    background-color: initial;
+    color: initial;
+  }
+
+  div.highlight code {
+    background-color: unset;
+    color: unset;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: #222;
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px;
+    text-align: center;
+  }
+
+  .helptext {
+    color: #777;
+    font-size: small;
+  }
+
+  .errorlist {
+    color: #eba613;
+    font-size: small;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: #8b6fcb;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    body {
+      background-color: #333;
+      color: #ddd;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    strong,
+    b {
+      color: #eee;
+    }
+
+    a {
+      color: #8cc2dd;
+    }
+
+    .title {
+      color: #fff;
+    }
+
+    .profile-link {
+      text-decoration: none;
+    }
+
+    code {
+      background-color: #777;
+    }
+
+    pre code {
+      color: #ddd;
+    }
+
+    blockquote {
+      color: #ccc;
+    }
+
+    textarea,
+    input {
+      background-color: #252525;
+      color: #ddd;
+    }
+
+    .helptext {
+      color: #aaa;
+    }
+  }
+
+</style>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '\\[', right: '\\]', display: true},   
+        {left: '$$', right: '$$', display: true},     
+        {left: '\\(', right: '\\)', display: false},  
+      ],
+      throwOnError : false
+    });
+  });
+</script>
+
+
+
+  
+
+  
+</head>
+
+<body>
+  <header><h2> 
+    <a href="/" class="title"> David Gurevich </a>
+        <a href="mailto:david@gurevich.ca" style="text-decoration: none; width: 1.2em;" class="fas fa-at"></a> 
+     <a href="https://www.linkedin.com/in/davidgur/" style="text-decoration: none; width: 1.2em;" class="fa fa-linkedin"></a> 
+       <a href="https://github.com/davidgur" style="text-decoration: none; width: 1.2em;" class="fa fa-github"></a>   
+       <a href="https://github.com/davidgur/resume/raw/master/resume.pdf" style="text-decoration: none; width: 1.2em;" class="far fa-file-pdf"></a> 
+</h2>
+<nav><a href="/">Home</a>
+
+
+<a href="/blog">Blog</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>Signal Compression from a Linear Algebra Perspective</h1>
+<p>
+  <i>
+    <time datetime='2025-07-10' pubdate>
+      2025-07-10
+    </time>
+  </i>
+</p>
+
+<content>
+  <p>One of my favourite courses from my time at the University of Waterloo was <a href="https://uwflow.com/course/amath391">AMATH 391</a>.
+At the time, it had the provocative title <em>From Fourier to Wavelets</em>.
+Nowadays, it has the more sober name <em>Data Analysis with Fourier and Wavelet Methods</em>.
+Honestly, this is probably a better name for the course anyways.</p>
+<p>I want to present to you a somewhat simple concept from this course.</p>
+<p>When we take the Fourier transformation of a signal \(f[t]\), we are finding the infinite dimensional <em>vector</em>
+that represents the signal in the Hilbert space of (usually) continuous functions (call it \(\mathcal{C}\))
+Moreover, in the case of a Fourier analysis, we are representing this <em>vector</em> using a &ldquo;basis&rdquo; of
+infinitely many sinusoids.</p>
+<p>Since we are operating in a Hilbert space, each <em>coordinate</em> of this <em>vector</em> has some magnitude.
+What we can then do, is take the \(N\) largest magnitude coordinates from this vector, and set the rest to 0.
+Of course, this does result in some loss, but most signals are sparse in the frequency domain anyways.</p>
+<p>From a more practical perspective, when you take a digital signal of finite length, the maximum bandwidth of
+the signal is at most half of your sampling frequency.</p>
+<blockquote>
+<p>For example, a typical audio file will have a sampling frequency of 44.1 kHz, so your audio signal will be able
+to represent at most 22.05 kHz.</p></blockquote>
+<p>So now imagine a 22,050 degree vector, where each coordinate is some real number.
+We can erase all but the 100 largest coordinates, and we will end up with over 90% of the fidelity with a
+tiny fraction of the data.</p>
+
+</content>
+<p>
+  
+</p>
+
+  </main>
+  <footer>
+</footer>
+
+    
+</body>
+
+</html>

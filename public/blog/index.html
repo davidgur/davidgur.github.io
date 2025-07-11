@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-us">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+<head>
   <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,23 +11,27 @@
 <meta name="keywords" content="" />
 
 
-<meta property="og:title" content="Blogs" />
-<meta property="og:description" content="" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="http://localhost:1313/blog/" />
+<meta property="og:url" content="https://www.gurevich.ca/blog/">
+  <meta property="og:site_name" content="David Gurevich">
+  <meta property="og:title" content="Blogs">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="website">
 
 
 
-<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Blogs"/>
-<meta name="twitter:description" content=""/>
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Blogs">
 
 
 
-<meta itemprop="name" content="Blogs">
-<meta itemprop="description" content="">
+
+  <meta itemprop="name" content="Blogs">
+  <meta itemprop="datePublished" content="2025-07-10T21:31:30-04:00">
+  <meta itemprop="dateModified" content="2025-07-10T21:31:30-04:00">
 <meta name="referrer" content="no-referrer-when-downgrade" />
 
-  <link rel="alternate" type="application/rss+xml" href="http://localhost:1313/blog/index.xml" title="David Gurevich" />
+  <link rel="alternate" type="application/rss+xml" href="https://www.gurevich.ca/blog/index.xml" title="David Gurevich" />
   <style>
   body {
     font-family: Verdana, sans-serif;
@@ -226,15 +230,23 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
   
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
 <script>
-  MathJax = {
-    tex: {
-      displayMath: [['\\[', '\\]'], ['$$', '$$']],  
-      inlineMath: [['\\(', '\\)']]                  
-    }
-  };
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '\\[', right: '\\]', display: true},   
+        {left: '$$', right: '$$', display: true},     
+        {left: '\\(', right: '\\)', display: false},  
+      ],
+      throwOnError : false
+    });
+  });
 </script>
+
+
 
   
 
@@ -264,12 +276,23 @@
     <li>
       <span>
         <i>
+          <time datetime='2025-07-10' pubdate>
+            2025-07-10
+          </time>
+        </i>
+      </span>
+      <a href="https://www.gurevich.ca/signal-compression-from-a-linear-algebra-perspective/">Signal Compression from a Linear Algebra Perspective</a>
+    </li>
+    
+    <li>
+      <span>
+        <i>
           <time datetime='2024-04-01' pubdate>
             2024-04-01
           </time>
         </i>
       </span>
-      <a href="http://localhost:1313/test-post/">Test Post</a>
+      <a href="https://www.gurevich.ca/test-post/">Test Post</a>
     </li>
     
   </ul>
@@ -284,36 +307,6 @@
 
   </main>
   <footer>
-
-<script type="text/javascript"
-  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  tex2jax: {
-    inlineMath: [['$','$'], ['\\(','\\)']],
-    displayMath: [['$$','$$'], ['\[','\]']],
-    processEscapes: true,
-    processEnvironments: true,
-    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-    TeX: { equationNumbers: { autoNumber: "AMS" },
-         extensions: ["AMSmath.js", "AMSsymbols.js"] }
-  }
-});
-</script>
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Queue(function() {
-    // Fix <code> tags after MathJax finishes running. This is a
-    // hack to overcome a shortcoming of Markdown. Discussion at
-    // https://github.com/mojombo/jekyll/issues/199
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i = 0; i &lt; all.length; i += 1) {
-        all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-});
-</script>
 </footer>
 
     
