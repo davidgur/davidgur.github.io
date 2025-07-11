@@ -16,12 +16,5 @@
       <guid>https://www.gurevich.ca/signal-compression-from-a-linear-algebra-perspective/</guid>
       <description>&lt;p&gt;One of my favourite courses from my time at the University of Waterloo was &lt;a href=&#34;https://uwflow.com/course/amath391&#34;&gt;AMATH 391&lt;/a&gt;.&#xA;At the time, it had the provocative title &lt;em&gt;From Fourier to Wavelets&lt;/em&gt;.&#xA;Nowadays, it has the more sober name &lt;em&gt;Data Analysis with Fourier and Wavelet Methods&lt;/em&gt;.&#xA;Honestly, this is probably a better name for the course anyways.&lt;/p&gt;&#xA;&lt;p&gt;I want to present to you a somewhat simple concept from this course.&lt;/p&gt;&#xA;&lt;p&gt;When we take the Fourier transformation of a signal \(f[t]\), we are finding the infinite dimensional &lt;em&gt;vector&lt;/em&gt;&#xA;that represents the signal in the Hilbert space of (usually) continuous functions (call it \(\mathcal{C}\))&#xA;Moreover, in the case of a Fourier analysis, we are representing this &lt;em&gt;vector&lt;/em&gt; using a &amp;ldquo;basis&amp;rdquo; of&#xA;infinitely many sinusoids.&lt;/p&gt;</description>
     </item>
-    <item>
-      <title>Test Post</title>
-      <link>https://www.gurevich.ca/test-post/</link>
-      <pubDate>Mon, 01 Apr 2024 21:13:42 -0400</pubDate>
-      <guid>https://www.gurevich.ca/test-post/</guid>
-      <description>&lt;p&gt;Here, I&amp;rsquo;m testing out some math. Here&amp;rsquo;s some inline math \( f(x) = x^2 + 3x + 4 \).&#xA;Here&amp;rsquo;s a subscript: \( x_3 \).&lt;/p&gt;&#xA;&lt;p&gt;Here&amp;rsquo;s the Fourier transform:&#xA;&lt;/p&gt;&#xA;$$ F(\omega) = \int_{-\infty}^{\infty} f(t) e^{-i 2 \pi \omega t} dt. $$</description>
-    </item>
   </channel>
 </rss>
