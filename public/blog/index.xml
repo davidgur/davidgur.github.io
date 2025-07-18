@@ -7,8 +7,15 @@
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>Copyright © 2024, David Gurevich</copyright>
-    <lastBuildDate>Thu, 10 Jul 2025 21:31:30 -0400</lastBuildDate>
+    <lastBuildDate>Thu, 17 Jul 2025 22:33:15 -0400</lastBuildDate>
     <atom:link href="https://www.gurevich.ca/blog/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Image Inpainting with Convex Optimization with Heuristics</title>
+      <link>https://www.gurevich.ca/image-inpainting-with-convex-optimization-with-heuristics/</link>
+      <pubDate>Thu, 17 Jul 2025 22:33:15 -0400</pubDate>
+      <guid>https://www.gurevich.ca/image-inpainting-with-convex-optimization-with-heuristics/</guid>
+      <description>&lt;p&gt;Image inpainting is the task of restoring missing or corrupted parts of an image.&#xA;State of the art methods are largely generative methods that are pretrained on&#xA;hundreds of thousands of images, and attempt to sample from the latent distribution&#xA;of the image. Rather than taking the &amp;ldquo;deep&amp;rdquo; approach, we will explore&#xA;methods that are entirely based on self-similarity measures.&#xA;The methods that we will explore are completely portable: they don&amp;rsquo;t require any&#xA;priors, and no pretrained model is necessary.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Signal Compression from a Linear Algebra Perspective</title>
       <link>https://www.gurevich.ca/signal-compression-from-a-linear-algebra-perspective/</link>
