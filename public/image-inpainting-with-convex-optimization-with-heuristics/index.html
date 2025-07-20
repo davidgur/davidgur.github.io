@@ -45,8 +45,11 @@ priors, and no pretrained model is necessary." />
 <meta name="referrer" content="no-referrer-when-downgrade" />
 
   <style>
+  @import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
   body {
-    font-family: Verdana, sans-serif;
+    font-family: "Work Sans", sans-serif;
+    font-optical-sizing: auto;
     margin: auto;
     padding: 20px;
     max-width: 720px;
@@ -57,6 +60,8 @@ priors, and no pretrained model is necessary." />
     line-height: 1.5;
     color: #444;
   }
+
+  body {
 
   h1,
   h2,
@@ -392,7 +397,7 @@ where
 \[ \nabla_x^2 = U_{i-1,j} - 2U_{i,j} + U_{i+1,j}, \]<p>
 and
 </p>
-\[ \nabla_y^2 = U_{i,j-1} - 2U_{i,j} + U_{i,j+1}. \]<p>We add a hyperparameter, \(gamma\), which we will use to tune how much we want to
+\[ \nabla_y^2 = U_{i,j-1} - 2U_{i,j} + U_{i,j+1}. \]<p>We add a hyperparameter, \(\gamma\), which we will use to tune how much we want to
 penalize the Laplacian.
 In CVXPY, we can write this as</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">inpaint_tv_lap_rgb</span>(img):

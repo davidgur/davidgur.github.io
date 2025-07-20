@@ -125,7 +125,7 @@ where
 and
 \[ \nabla_y^2 = U_{i,j-1} - 2U_{i,j} + U_{i,j+1}. \]
 
-We add a hyperparameter, \(gamma\), which we will use to tune how much we want to
+We add a hyperparameter, \(\gamma\), which we will use to tune how much we want to
 penalize the Laplacian.
 In CVXPY, we can write this as
 
