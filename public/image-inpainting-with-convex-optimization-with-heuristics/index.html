@@ -41,10 +41,13 @@ priors, and no pretrained model is necessary." />
   <meta itemprop="description" content="Image inpainting is the task of restoring missing or corrupted parts of an image. State of the art methods are largely generative methods that are pretrained on hundreds of thousands of images, and attempt to sample from the latent distribution of the image. Rather than taking the “deep” approach, we will explore methods that are entirely based on self-similarity measures. The methods that we will explore are completely portable: they don’t require any priors, and no pretrained model is necessary.">
   <meta itemprop="datePublished" content="2025-07-17T22:33:15-04:00">
   <meta itemprop="dateModified" content="2025-07-17T22:33:15-04:00">
-  <meta itemprop="wordCount" content="1864">
+  <meta itemprop="wordCount" content="2012">
 <meta name="referrer" content="no-referrer-when-downgrade" />
 
-  <style>
+  <link rel="stylesheet" href="/css/syntax-light.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="/css/syntax-dark.css" media="(prefers-color-scheme: dark)">
+
+<style>
   @import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 
   :root {
@@ -56,9 +59,9 @@ priors, and no pretrained model is necessary." />
     --heading-color: #444;
     --text-color: #444;
     --link-color: #3273dc;
-    --visited-color: #8b6fcb;
-    --code-background-color: #f2f2f2;
-    --code-color: #222;
+    --visited-color: #e331ef;
+    
+    
     --blockquote-color: #222;
   }
 
@@ -68,9 +71,9 @@ priors, and no pretrained model is necessary." />
       --heading-color: #eee;
       --text-color: #ddd;
       --link-color: #8cc2dd;
-      --visited-color: #8b6fcb;
-      --code-background-color: #000;
-      --code-color: #ddd;
+      --visited-color: #e331ef;
+      
+      
       --blockquote-color: #ccc;
     }
   }
@@ -98,7 +101,6 @@ priors, and no pretrained model is necessary." />
   h5,
   h6 {
     font-family: var(--font-main);
-    
     color: var(--heading-color);
     font-weight: 500;
   }
@@ -319,31 +321,31 @@ be filled in.
 Then our optimization problem is
 </p>
 \[ \begin{align*} \text{min} & \quad  \text{tv}(U) \\ \text{s.t.} & \quad U_{ij} = U_{ij}^{\text{orig}} \quad \forall (i, j) \in K \end{align*} \]<p>We can write this using CVXPY as follows:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">inpaint_tv_rgb</span>(img):
-</span></span><span style="display:flex;"><span>    img_rgb <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>array(img)<span style="color:#f92672">.</span>astype(np<span style="color:#f92672">.</span>float32) <span style="color:#f92672">/</span> <span style="color:#ae81ff">255.0</span>
-</span></span><span style="display:flex;"><span>    H, W, C <span style="color:#f92672">=</span> img_rgb<span style="color:#f92672">.</span>shape
-</span></span><span style="display:flex;"><span>    mask <span style="color:#f92672">=</span> (np<span style="color:#f92672">.</span>sum(img_rgb, axis<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>)<span style="color:#f92672">.</span>astype(np<span style="color:#f92672">.</span>float32)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># --- Variables ---</span>
-</span></span><span style="display:flex;"><span>    U <span style="color:#f92672">=</span> [cp<span style="color:#f92672">.</span>Variable((H, W)) <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(C)]
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># --- Objectives ---</span>
-</span></span><span style="display:flex;"><span>    total_loss <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>    constraints <span style="color:#f92672">=</span> []
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> c <span style="color:#f92672">in</span> range(C):
-</span></span><span style="display:flex;"><span>        total_loss <span style="color:#f92672">+=</span> cp<span style="color:#f92672">.</span>tv(U[c])
-</span></span><span style="display:flex;"><span>        constraints <span style="color:#f92672">+=</span> [
-</span></span><span style="display:flex;"><span>            cp<span style="color:#f92672">.</span>multiply(mask, U[c]) <span style="color:#f92672">==</span> cp<span style="color:#f92672">.</span>multiply(mask, img_rgb[:, :, c]),
-</span></span><span style="display:flex;"><span>            U[c] <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>, U[c] <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">1</span>
-</span></span><span style="display:flex;"><span>        ]
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># --- Solve ---</span>
-</span></span><span style="display:flex;"><span>    prob <span style="color:#f92672">=</span> cp<span style="color:#f92672">.</span>Problem(cp<span style="color:#f92672">.</span>Minimize(total_loss), constraints)
-</span></span><span style="display:flex;"><span>    prob<span style="color:#f92672">.</span>solve(solver<span style="color:#f92672">=</span>cp<span style="color:#f92672">.</span>MOSEK, verbose<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># --- Output ---</span>
-</span></span><span style="display:flex;"><span>    u_val <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>stack([np<span style="color:#f92672">.</span>clip(U[c]<span style="color:#f92672">.</span>value, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>) <span style="color:#66d9ef">for</span> c <span style="color:#f92672">in</span> range(C)], axis<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> u_val
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="k">def</span> <span class="nf">inpaint_tv_rgb</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">    <span class="n">img_rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="o">/</span> <span class="mf">255.0</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">    <span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">C</span> <span class="o">=</span> <span class="n">img_rgb</span><span class="o">.</span><span class="n">shape</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">    <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">img_rgb</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">    <span class="c1"># --- Variables ---</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">    <span class="n">U</span> <span class="o">=</span> <span class="p">[</span><span class="n">cp</span><span class="o">.</span><span class="n">Variable</span><span class="p">((</span><span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">C</span><span class="p">)]</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">    <span class="c1"># --- Objectives ---</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">    <span class="n">total_loss</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">    <span class="n">constraints</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">C</span><span class="p">):</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">        <span class="n">total_loss</span> <span class="o">+=</span> <span class="n">cp</span><span class="o">.</span><span class="n">tv</span><span class="p">(</span><span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">        <span class="n">constraints</span> <span class="o">+=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">            <span class="n">cp</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">])</span> <span class="o">==</span> <span class="n">cp</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">img_rgb</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">c</span><span class="p">]),</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">            <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">        <span class="p">]</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">
+</span></span><span class="line"><span class="ln">19</span><span class="cl">    <span class="c1"># --- Solve ---</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">    <span class="n">prob</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Problem</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">Minimize</span><span class="p">(</span><span class="n">total_loss</span><span class="p">),</span> <span class="n">constraints</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">    <span class="n">prob</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="n">cp</span><span class="o">.</span><span class="n">MOSEK</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl">
+</span></span><span class="line"><span class="ln">23</span><span class="cl">    <span class="c1"># --- Output ---</span>
+</span></span><span class="line"><span class="ln">24</span><span class="cl">    <span class="n">u_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">C</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">25</span><span class="cl">    <span class="k">return</span> <span class="n">u_val</span>
 </span></span></code></pre></div><p>The resulting image is
 <img src="lena_sol1.png" alt="Lena First Solution"></p>
 <p>We see quite good performance on small holes in the Lena image.
@@ -377,38 +379,38 @@ and
 \[ \nabla_y^2 = U_{i,j-1} - 2U_{i,j} + U_{i,j+1}. \]<p>We add a hyperparameter, \(\gamma\), which we will use to tune how much we want to
 penalize the Laplacian.
 In CVXPY, we can write this as</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">inpaint_tv_lap_rgb</span>(img):
-</span></span><span style="display:flex;"><span>    img_rgb <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>array(img)<span style="color:#f92672">.</span>astype(np<span style="color:#f92672">.</span>float32) <span style="color:#f92672">/</span> <span style="color:#ae81ff">255.0</span>
-</span></span><span style="display:flex;"><span>    H, W, C <span style="color:#f92672">=</span> img_rgb<span style="color:#f92672">.</span>shape
-</span></span><span style="display:flex;"><span>    mask <span style="color:#f92672">=</span> (np<span style="color:#f92672">.</span>sum(img_rgb, axis<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>)<span style="color:#f92672">.</span>astype(np<span style="color:#f92672">.</span>float32)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># --- Variables ---</span>
-</span></span><span style="display:flex;"><span>    U <span style="color:#f92672">=</span> [cp<span style="color:#f92672">.</span>Variable((H, W)) <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(C)]
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># --- Objectives ---</span>
-</span></span><span style="display:flex;"><span>    total_loss <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>    constraints <span style="color:#f92672">=</span> []
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> c <span style="color:#f92672">in</span> range(C):
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># --- Laplacian</span>
-</span></span><span style="display:flex;"><span>        gamma <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.01</span>
-</span></span><span style="display:flex;"><span>        lap_x <span style="color:#f92672">=</span> U[c][:<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">1</span>:<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> U[c][<span style="color:#ae81ff">1</span>:<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>:<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">+</span> U[c][<span style="color:#ae81ff">2</span>:, <span style="color:#ae81ff">1</span>:<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]
-</span></span><span style="display:flex;"><span>        lap_y <span style="color:#f92672">=</span> U[c][<span style="color:#ae81ff">1</span>:<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, :<span style="color:#f92672">-</span><span style="color:#ae81ff">2</span>] <span style="color:#f92672">-</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> U[c][<span style="color:#ae81ff">1</span>:<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>:<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">+</span> U[c][<span style="color:#ae81ff">1</span>:<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">2</span>:]
-</span></span><span style="display:flex;"><span>        lap <span style="color:#f92672">=</span> gamma <span style="color:#f92672">*</span> (cp<span style="color:#f92672">.</span>sum_squares(lap_x) <span style="color:#f92672">+</span> cp<span style="color:#f92672">.</span>sum_squares(lap_y))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        total_loss <span style="color:#f92672">+=</span> cp<span style="color:#f92672">.</span>tv(U[c]) <span style="color:#f92672">+</span> lap
-</span></span><span style="display:flex;"><span>        constraints <span style="color:#f92672">+=</span> [
-</span></span><span style="display:flex;"><span>            cp<span style="color:#f92672">.</span>multiply(mask, U[c]) <span style="color:#f92672">==</span> cp<span style="color:#f92672">.</span>multiply(mask, img_rgb[:, :, c]),
-</span></span><span style="display:flex;"><span>            U[c] <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>, U[c] <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">1</span>
-</span></span><span style="display:flex;"><span>        ]
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># --- Solve ---</span>
-</span></span><span style="display:flex;"><span>    prob <span style="color:#f92672">=</span> cp<span style="color:#f92672">.</span>Problem(cp<span style="color:#f92672">.</span>Minimize(total_loss), constraints)
-</span></span><span style="display:flex;"><span>    prob<span style="color:#f92672">.</span>solve(solver<span style="color:#f92672">=</span>cp<span style="color:#f92672">.</span>MOSEK, verbose<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># --- Output ---</span>
-</span></span><span style="display:flex;"><span>    u_val <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>stack([np<span style="color:#f92672">.</span>clip(U[c]<span style="color:#f92672">.</span>value, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>) <span style="color:#66d9ef">for</span> c <span style="color:#f92672">in</span> range(C)], axis<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> u_val
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="k">def</span> <span class="nf">inpaint_tv_lap_rgb</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">    <span class="n">img_rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="o">/</span> <span class="mf">255.0</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">    <span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">C</span> <span class="o">=</span> <span class="n">img_rgb</span><span class="o">.</span><span class="n">shape</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">    <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">img_rgb</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">    <span class="c1"># --- Variables ---</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">    <span class="n">U</span> <span class="o">=</span> <span class="p">[</span><span class="n">cp</span><span class="o">.</span><span class="n">Variable</span><span class="p">((</span><span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">C</span><span class="p">)]</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">    <span class="c1"># --- Objectives ---</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">    <span class="n">total_loss</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">    <span class="n">constraints</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">
+</span></span><span class="line"><span class="ln">13</span><span class="cl">    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">C</span><span class="p">):</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">        <span class="c1"># --- Laplacian</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">        <span class="n">gamma</span> <span class="o">=</span> <span class="mf">0.01</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">        <span class="n">lap_x</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">][:</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="mi">2</span><span class="p">:,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">        <span class="n">lap_y</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">:]</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">        <span class="n">lap</span> <span class="o">=</span> <span class="n">gamma</span> <span class="o">*</span> <span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">sum_squares</span><span class="p">(</span><span class="n">lap_x</span><span class="p">)</span> <span class="o">+</span> <span class="n">cp</span><span class="o">.</span><span class="n">sum_squares</span><span class="p">(</span><span class="n">lap_y</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">
+</span></span><span class="line"><span class="ln">20</span><span class="cl">        <span class="n">total_loss</span> <span class="o">+=</span> <span class="n">cp</span><span class="o">.</span><span class="n">tv</span><span class="p">(</span><span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">])</span> <span class="o">+</span> <span class="n">lap</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">        <span class="n">constraints</span> <span class="o">+=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl">            <span class="n">cp</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">])</span> <span class="o">==</span> <span class="n">cp</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">img_rgb</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">c</span><span class="p">]),</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">            <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="ln">24</span><span class="cl">        <span class="p">]</span>
+</span></span><span class="line"><span class="ln">25</span><span class="cl">
+</span></span><span class="line"><span class="ln">26</span><span class="cl">    <span class="c1"># --- Solve ---</span>
+</span></span><span class="line"><span class="ln">27</span><span class="cl">    <span class="n">prob</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Problem</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">Minimize</span><span class="p">(</span><span class="n">total_loss</span><span class="p">),</span> <span class="n">constraints</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">28</span><span class="cl">    <span class="n">prob</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="n">cp</span><span class="o">.</span><span class="n">MOSEK</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">29</span><span class="cl">
+</span></span><span class="line"><span class="ln">30</span><span class="cl">    <span class="c1"># --- Output ---</span>
+</span></span><span class="line"><span class="ln">31</span><span class="cl">    <span class="n">u_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">C</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">32</span><span class="cl">    <span class="k">return</span> <span class="n">u_val</span>
 </span></span></code></pre></div><p>We now examine the two NYC images:
 <img src="nyc_sol2.png" alt="NYC Sol 2">
 <img src="nyc_sol2_block.png" alt="NYC Sol 2 Block">
@@ -441,52 +443,52 @@ where \(\alpha_1\) and \(\alpha_2\) are tuning parameters.</p>
 <p>Notice that minimizing the total generalized variation will promote small, sparse
 gradients, as well as small second-order effects.
 We implement the TGV based image-inpainting algorithm below.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">inpaint_tgv_rgb</span>(img):
-</span></span><span style="display:flex;"><span>    img_rgb <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>array(img)<span style="color:#f92672">.</span>astype(np<span style="color:#f92672">.</span>float32) <span style="color:#f92672">/</span> <span style="color:#ae81ff">255.0</span>
-</span></span><span style="display:flex;"><span>    H, W, C <span style="color:#f92672">=</span> img_rgb<span style="color:#f92672">.</span>shape
-</span></span><span style="display:flex;"><span>    mask <span style="color:#f92672">=</span> (np<span style="color:#f92672">.</span>sum(img_rgb, axis<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>)<span style="color:#f92672">.</span>astype(np<span style="color:#f92672">.</span>float32)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># --- Parameters ---</span>
-</span></span><span style="display:flex;"><span>    alpha1 <span style="color:#f92672">=</span> <span style="color:#ae81ff">2.5</span>
-</span></span><span style="display:flex;"><span>    alpha2 <span style="color:#f92672">=</span> <span style="color:#ae81ff">6</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># --- Variables ---</span>
-</span></span><span style="display:flex;"><span>    U <span style="color:#f92672">=</span> [cp<span style="color:#f92672">.</span>Variable((H, W)) <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(C)]
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># --- Objectives ---</span>
-</span></span><span style="display:flex;"><span>    total_loss <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>    constraints <span style="color:#f92672">=</span> []
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> c <span style="color:#f92672">in</span> range(C):
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># --- First-order</span>
-</span></span><span style="display:flex;"><span>        DUx <span style="color:#f92672">=</span> U[c][<span style="color:#ae81ff">1</span>:, :] <span style="color:#f92672">-</span> U[c][:<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, :]
-</span></span><span style="display:flex;"><span>        DUy <span style="color:#f92672">=</span> U[c][:, <span style="color:#ae81ff">1</span>:] <span style="color:#f92672">-</span> U[c][:, :<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]
-</span></span><span style="display:flex;"><span>        Wx <span style="color:#f92672">=</span> cp<span style="color:#f92672">.</span>Variable((H <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>, W))
-</span></span><span style="display:flex;"><span>        Wy <span style="color:#f92672">=</span> cp<span style="color:#f92672">.</span>Variable((H, W <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># --- Second-order</span>
-</span></span><span style="display:flex;"><span>        DWx <span style="color:#f92672">=</span> Wx[:, <span style="color:#ae81ff">1</span>:] <span style="color:#f92672">-</span> Wx[:, :<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]
-</span></span><span style="display:flex;"><span>        DWy <span style="color:#f92672">=</span> Wy[<span style="color:#ae81ff">1</span>:, :] <span style="color:#f92672">-</span> Wy[:<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, :]
-</span></span><span style="display:flex;"><span>        tgv_first_order <span style="color:#f92672">=</span> cp<span style="color:#f92672">.</span>norm1(DUx <span style="color:#f92672">-</span> Wx) <span style="color:#f92672">+</span> cp<span style="color:#f92672">.</span>norm1(DUy <span style="color:#f92672">-</span> Wy)
-</span></span><span style="display:flex;"><span>        tgv_second_order <span style="color:#f92672">=</span> cp<span style="color:#f92672">.</span>norm1(DWx) <span style="color:#f92672">+</span> cp<span style="color:#f92672">.</span>norm1(DWy)
-</span></span><span style="display:flex;"><span>        tgv_total <span style="color:#f92672">=</span> alpha1 <span style="color:#f92672">*</span> tgv_first_order <span style="color:#f92672">+</span> alpha2 <span style="color:#f92672">*</span> tgv_second_order
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># --- Total</span>
-</span></span><span style="display:flex;"><span>        total_loss <span style="color:#f92672">+=</span> tgv_total
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># --- Constraints</span>
-</span></span><span style="display:flex;"><span>        constraints <span style="color:#f92672">+=</span> [
-</span></span><span style="display:flex;"><span>            cp<span style="color:#f92672">.</span>multiply(mask, U[c]) <span style="color:#f92672">==</span> cp<span style="color:#f92672">.</span>multiply(mask, img_rgb[:, :, c]),
-</span></span><span style="display:flex;"><span>            U[c] <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>, U[c] <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">1</span>
-</span></span><span style="display:flex;"><span>        ]
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># --- Solve ---</span>
-</span></span><span style="display:flex;"><span>    prob <span style="color:#f92672">=</span> cp<span style="color:#f92672">.</span>Problem(cp<span style="color:#f92672">.</span>Minimize(total_loss), constraints)
-</span></span><span style="display:flex;"><span>    prob<span style="color:#f92672">.</span>solve(solver<span style="color:#f92672">=</span>cp<span style="color:#f92672">.</span>MOSEK, verbose<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># --- Output ---</span>
-</span></span><span style="display:flex;"><span>    u_val <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>stack([np<span style="color:#f92672">.</span>clip(U[c]<span style="color:#f92672">.</span>value, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>) <span style="color:#66d9ef">for</span> c <span style="color:#f92672">in</span> range(C)], axis<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> u_val
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="k">def</span> <span class="nf">inpaint_tgv_rgb</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">    <span class="n">img_rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="o">/</span> <span class="mf">255.0</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">    <span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">C</span> <span class="o">=</span> <span class="n">img_rgb</span><span class="o">.</span><span class="n">shape</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">    <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">img_rgb</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">    <span class="c1"># --- Parameters ---</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">    <span class="n">alpha1</span> <span class="o">=</span> <span class="mf">2.5</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">    <span class="n">alpha2</span> <span class="o">=</span> <span class="mi">6</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">
+</span></span><span class="line"><span class="ln">10</span><span class="cl">    <span class="c1"># --- Variables ---</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">    <span class="n">U</span> <span class="o">=</span> <span class="p">[</span><span class="n">cp</span><span class="o">.</span><span class="n">Variable</span><span class="p">((</span><span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">C</span><span class="p">)]</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">
+</span></span><span class="line"><span class="ln">13</span><span class="cl">    <span class="c1"># --- Objectives ---</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">    <span class="n">total_loss</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">    <span class="n">constraints</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">
+</span></span><span class="line"><span class="ln">17</span><span class="cl">    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">C</span><span class="p">):</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">        <span class="c1"># --- First-order</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">        <span class="n">DUx</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">        <span class="n">DUy</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">][:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">        <span class="n">Wx</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Variable</span><span class="p">((</span><span class="n">H</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">W</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl">        <span class="n">Wy</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Variable</span><span class="p">((</span><span class="n">H</span><span class="p">,</span> <span class="n">W</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">
+</span></span><span class="line"><span class="ln">24</span><span class="cl">        <span class="c1"># --- Second-order</span>
+</span></span><span class="line"><span class="ln">25</span><span class="cl">        <span class="n">DWx</span> <span class="o">=</span> <span class="n">Wx</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">Wx</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">26</span><span class="cl">        <span class="n">DWy</span> <span class="o">=</span> <span class="n">Wy</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">Wy</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+</span></span><span class="line"><span class="ln">27</span><span class="cl">        <span class="n">tgv_first_order</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">norm1</span><span class="p">(</span><span class="n">DUx</span> <span class="o">-</span> <span class="n">Wx</span><span class="p">)</span> <span class="o">+</span> <span class="n">cp</span><span class="o">.</span><span class="n">norm1</span><span class="p">(</span><span class="n">DUy</span> <span class="o">-</span> <span class="n">Wy</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">28</span><span class="cl">        <span class="n">tgv_second_order</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">norm1</span><span class="p">(</span><span class="n">DWx</span><span class="p">)</span> <span class="o">+</span> <span class="n">cp</span><span class="o">.</span><span class="n">norm1</span><span class="p">(</span><span class="n">DWy</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">29</span><span class="cl">        <span class="n">tgv_total</span> <span class="o">=</span> <span class="n">alpha1</span> <span class="o">*</span> <span class="n">tgv_first_order</span> <span class="o">+</span> <span class="n">alpha2</span> <span class="o">*</span> <span class="n">tgv_second_order</span>
+</span></span><span class="line"><span class="ln">30</span><span class="cl">
+</span></span><span class="line"><span class="ln">31</span><span class="cl">        <span class="c1"># --- Total</span>
+</span></span><span class="line"><span class="ln">32</span><span class="cl">        <span class="n">total_loss</span> <span class="o">+=</span> <span class="n">tgv_total</span>
+</span></span><span class="line"><span class="ln">33</span><span class="cl">
+</span></span><span class="line"><span class="ln">34</span><span class="cl">        <span class="c1"># --- Constraints</span>
+</span></span><span class="line"><span class="ln">35</span><span class="cl">        <span class="n">constraints</span> <span class="o">+=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="ln">36</span><span class="cl">            <span class="n">cp</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">])</span> <span class="o">==</span> <span class="n">cp</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">img_rgb</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">c</span><span class="p">]),</span>
+</span></span><span class="line"><span class="ln">37</span><span class="cl">            <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="ln">38</span><span class="cl">        <span class="p">]</span>
+</span></span><span class="line"><span class="ln">39</span><span class="cl">
+</span></span><span class="line"><span class="ln">40</span><span class="cl">    <span class="c1"># --- Solve ---</span>
+</span></span><span class="line"><span class="ln">41</span><span class="cl">    <span class="n">prob</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Problem</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">Minimize</span><span class="p">(</span><span class="n">total_loss</span><span class="p">),</span> <span class="n">constraints</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">42</span><span class="cl">    <span class="n">prob</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="n">cp</span><span class="o">.</span><span class="n">MOSEK</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">43</span><span class="cl">
+</span></span><span class="line"><span class="ln">44</span><span class="cl">    <span class="c1"># --- Output ---</span>
+</span></span><span class="line"><span class="ln">45</span><span class="cl">    <span class="n">u_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">C</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">46</span><span class="cl">    <span class="k">return</span> <span class="n">u_val</span>
 </span></span></code></pre></div><p><img src="nyc_sol3_block.png" alt="NYC Sol3 Block">
 This is considerable improvement!
 We see that the shadows in the bottom left-hand corner is filled in, in such a way
@@ -500,55 +502,55 @@ of these artifacts</p>
 <p>In order to eliminate the vertical and horizontal artifacts, we add a small \(l_2\)
 total variation penalty.
 This will penalize the vertical and horizontal lines that we see above.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">inpaint_tgv_tv_rgb</span>(img):
-</span></span><span style="display:flex;"><span>    img_rgb <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>array(img)<span style="color:#f92672">.</span>astype(np<span style="color:#f92672">.</span>float32) <span style="color:#f92672">/</span> <span style="color:#ae81ff">255.0</span>
-</span></span><span style="display:flex;"><span>    H, W, C <span style="color:#f92672">=</span> img_rgb<span style="color:#f92672">.</span>shape
-</span></span><span style="display:flex;"><span>    mask <span style="color:#f92672">=</span> (np<span style="color:#f92672">.</span>sum(img_rgb, axis<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>)<span style="color:#f92672">.</span>astype(np<span style="color:#f92672">.</span>float32)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># --- Parameters ---</span>
-</span></span><span style="display:flex;"><span>    alpha1 <span style="color:#f92672">=</span> <span style="color:#ae81ff">2.5</span>
-</span></span><span style="display:flex;"><span>    alpha2 <span style="color:#f92672">=</span> <span style="color:#ae81ff">6</span>
-</span></span><span style="display:flex;"><span>    beta <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.01</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># --- Variables ---</span>
-</span></span><span style="display:flex;"><span>    U <span style="color:#f92672">=</span> [cp<span style="color:#f92672">.</span>Variable((H, W)) <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(C)]
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># --- Objectives ---</span>
-</span></span><span style="display:flex;"><span>    total_loss <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>    constraints <span style="color:#f92672">=</span> []
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> c <span style="color:#f92672">in</span> range(C):
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># --- (TGV) First-order</span>
-</span></span><span style="display:flex;"><span>        DUx <span style="color:#f92672">=</span> U[c][<span style="color:#ae81ff">1</span>:, :] <span style="color:#f92672">-</span> U[c][:<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, :]
-</span></span><span style="display:flex;"><span>        DUy <span style="color:#f92672">=</span> U[c][:, <span style="color:#ae81ff">1</span>:] <span style="color:#f92672">-</span> U[c][:, :<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]
-</span></span><span style="display:flex;"><span>        Wx <span style="color:#f92672">=</span> cp<span style="color:#f92672">.</span>Variable((H <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>, W))
-</span></span><span style="display:flex;"><span>        Wy <span style="color:#f92672">=</span> cp<span style="color:#f92672">.</span>Variable((H, W <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>))
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># --- (TGV) Second-order</span>
-</span></span><span style="display:flex;"><span>        DWx <span style="color:#f92672">=</span> Wx[:, <span style="color:#ae81ff">1</span>:] <span style="color:#f92672">-</span> Wx[:, :<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]
-</span></span><span style="display:flex;"><span>        DWy <span style="color:#f92672">=</span> Wy[<span style="color:#ae81ff">1</span>:, :] <span style="color:#f92672">-</span> Wy[:<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, :]
-</span></span><span style="display:flex;"><span>        tgv_first_order <span style="color:#f92672">=</span> cp<span style="color:#f92672">.</span>norm1(DUx <span style="color:#f92672">-</span> Wx) <span style="color:#f92672">+</span> cp<span style="color:#f92672">.</span>norm1(DUy <span style="color:#f92672">-</span> Wy)
-</span></span><span style="display:flex;"><span>        tgv_second_order <span style="color:#f92672">=</span> cp<span style="color:#f92672">.</span>norm1(DWx) <span style="color:#f92672">+</span> cp<span style="color:#f92672">.</span>norm1(DWy)
-</span></span><span style="display:flex;"><span>        tgv_total <span style="color:#f92672">=</span> alpha1 <span style="color:#f92672">*</span> tgv_first_order <span style="color:#f92672">+</span> alpha2 <span style="color:#f92672">*</span> tgv_second_order
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># --- Total Variation</span>
-</span></span><span style="display:flex;"><span>        tv <span style="color:#f92672">=</span> beta <span style="color:#f92672">*</span> cp<span style="color:#f92672">.</span>tv(U[c])
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># --- Total</span>
-</span></span><span style="display:flex;"><span>        total_loss <span style="color:#f92672">+=</span> tgv_total <span style="color:#f92672">+</span> tv
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># --- Constraints</span>
-</span></span><span style="display:flex;"><span>        constraints <span style="color:#f92672">+=</span> [
-</span></span><span style="display:flex;"><span>            cp<span style="color:#f92672">.</span>multiply(mask, U[c]) <span style="color:#f92672">==</span> cp<span style="color:#f92672">.</span>multiply(mask, img_rgb[:, :, c]),
-</span></span><span style="display:flex;"><span>            U[c] <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>, U[c] <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">1</span>
-</span></span><span style="display:flex;"><span>        ]
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># --- Solve ---</span>
-</span></span><span style="display:flex;"><span>    prob <span style="color:#f92672">=</span> cp<span style="color:#f92672">.</span>Problem(cp<span style="color:#f92672">.</span>Minimize(total_loss), constraints)
-</span></span><span style="display:flex;"><span>    prob<span style="color:#f92672">.</span>solve(solver<span style="color:#f92672">=</span>cp<span style="color:#f92672">.</span>MOSEK, verbose<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># --- Output ---</span>
-</span></span><span style="display:flex;"><span>    u_val <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>stack([np<span style="color:#f92672">.</span>clip(U[c]<span style="color:#f92672">.</span>value, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>) <span style="color:#66d9ef">for</span> c <span style="color:#f92672">in</span> range(C)], axis<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> u_val
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="k">def</span> <span class="nf">inpaint_tgv_tv_rgb</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">    <span class="n">img_rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="o">/</span> <span class="mf">255.0</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">    <span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">C</span> <span class="o">=</span> <span class="n">img_rgb</span><span class="o">.</span><span class="n">shape</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">    <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">img_rgb</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">    <span class="c1"># --- Parameters ---</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">    <span class="n">alpha1</span> <span class="o">=</span> <span class="mf">2.5</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">    <span class="n">alpha2</span> <span class="o">=</span> <span class="mi">6</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">    <span class="n">beta</span> <span class="o">=</span> <span class="mf">0.01</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">
+</span></span><span class="line"><span class="ln">11</span><span class="cl">    <span class="c1"># --- Variables ---</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">    <span class="n">U</span> <span class="o">=</span> <span class="p">[</span><span class="n">cp</span><span class="o">.</span><span class="n">Variable</span><span class="p">((</span><span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">C</span><span class="p">)]</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">
+</span></span><span class="line"><span class="ln">14</span><span class="cl">    <span class="c1"># --- Objectives ---</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">    <span class="n">total_loss</span> <span class="o">=</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">    <span class="n">constraints</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">
+</span></span><span class="line"><span class="ln">18</span><span class="cl">    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">C</span><span class="p">):</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">        <span class="c1"># --- (TGV) First-order</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">        <span class="n">DUx</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">][</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">        <span class="n">DUy</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">][:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl">        <span class="n">Wx</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Variable</span><span class="p">((</span><span class="n">H</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">W</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">        <span class="n">Wy</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Variable</span><span class="p">((</span><span class="n">H</span><span class="p">,</span> <span class="n">W</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">24</span><span class="cl">
+</span></span><span class="line"><span class="ln">25</span><span class="cl">        <span class="c1"># --- (TGV) Second-order</span>
+</span></span><span class="line"><span class="ln">26</span><span class="cl">        <span class="n">DWx</span> <span class="o">=</span> <span class="n">Wx</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">Wx</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">27</span><span class="cl">        <span class="n">DWy</span> <span class="o">=</span> <span class="n">Wy</span><span class="p">[</span><span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">Wy</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+</span></span><span class="line"><span class="ln">28</span><span class="cl">        <span class="n">tgv_first_order</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">norm1</span><span class="p">(</span><span class="n">DUx</span> <span class="o">-</span> <span class="n">Wx</span><span class="p">)</span> <span class="o">+</span> <span class="n">cp</span><span class="o">.</span><span class="n">norm1</span><span class="p">(</span><span class="n">DUy</span> <span class="o">-</span> <span class="n">Wy</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">29</span><span class="cl">        <span class="n">tgv_second_order</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">norm1</span><span class="p">(</span><span class="n">DWx</span><span class="p">)</span> <span class="o">+</span> <span class="n">cp</span><span class="o">.</span><span class="n">norm1</span><span class="p">(</span><span class="n">DWy</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">30</span><span class="cl">        <span class="n">tgv_total</span> <span class="o">=</span> <span class="n">alpha1</span> <span class="o">*</span> <span class="n">tgv_first_order</span> <span class="o">+</span> <span class="n">alpha2</span> <span class="o">*</span> <span class="n">tgv_second_order</span>
+</span></span><span class="line"><span class="ln">31</span><span class="cl">
+</span></span><span class="line"><span class="ln">32</span><span class="cl">        <span class="c1"># --- Total Variation</span>
+</span></span><span class="line"><span class="ln">33</span><span class="cl">        <span class="n">tv</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">cp</span><span class="o">.</span><span class="n">tv</span><span class="p">(</span><span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
+</span></span><span class="line"><span class="ln">34</span><span class="cl">
+</span></span><span class="line"><span class="ln">35</span><span class="cl">        <span class="c1"># --- Total</span>
+</span></span><span class="line"><span class="ln">36</span><span class="cl">        <span class="n">total_loss</span> <span class="o">+=</span> <span class="n">tgv_total</span> <span class="o">+</span> <span class="n">tv</span>
+</span></span><span class="line"><span class="ln">37</span><span class="cl">
+</span></span><span class="line"><span class="ln">38</span><span class="cl">        <span class="c1"># --- Constraints</span>
+</span></span><span class="line"><span class="ln">39</span><span class="cl">        <span class="n">constraints</span> <span class="o">+=</span> <span class="p">[</span>
+</span></span><span class="line"><span class="ln">40</span><span class="cl">            <span class="n">cp</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">])</span> <span class="o">==</span> <span class="n">cp</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">img_rgb</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">c</span><span class="p">]),</span>
+</span></span><span class="line"><span class="ln">41</span><span class="cl">            <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="ln">42</span><span class="cl">        <span class="p">]</span>
+</span></span><span class="line"><span class="ln">43</span><span class="cl">    <span class="c1"># --- Solve ---</span>
+</span></span><span class="line"><span class="ln">44</span><span class="cl">    <span class="n">prob</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">Problem</span><span class="p">(</span><span class="n">cp</span><span class="o">.</span><span class="n">Minimize</span><span class="p">(</span><span class="n">total_loss</span><span class="p">),</span> <span class="n">constraints</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">45</span><span class="cl">    <span class="n">prob</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="n">cp</span><span class="o">.</span><span class="n">MOSEK</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">46</span><span class="cl">
+</span></span><span class="line"><span class="ln">47</span><span class="cl">    <span class="c1"># --- Output ---</span>
+</span></span><span class="line"><span class="ln">48</span><span class="cl">    <span class="n">u_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">U</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">C</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">49</span><span class="cl">    <span class="k">return</span> <span class="n">u_val</span>
 </span></span></code></pre></div><p><img src="nyc_sol4_block.png" alt="NYC Block 4">
 Observe that adding a small total variation penalty has smoothed out the vertical
 and horizontal artifacts.

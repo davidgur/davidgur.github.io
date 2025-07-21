@@ -19,6 +19,10 @@ ignoreErrors = ["error-disable-taxonomy"]
 
 # MathJax stuff
 [markup]
+  [markup.highlight]
+    lineNos = true
+    lineNumbersInTable = false
+    noClasses = false
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true

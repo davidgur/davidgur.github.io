@@ -43,7 +43,10 @@ My previous experience has largely revolved around data-intensive embedded syste
 <meta name="referrer" content="no-referrer-when-downgrade" />
 
   <link rel="alternate" type="application/rss+xml" href="https://www.gurevich.ca/index.xml" title="David Gurevich" />
-  <style>
+  <link rel="stylesheet" href="/css/syntax-light.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="/css/syntax-dark.css" media="(prefers-color-scheme: dark)">
+
+<style>
   @import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 
   :root {
@@ -55,9 +58,9 @@ My previous experience has largely revolved around data-intensive embedded syste
     --heading-color: #444;
     --text-color: #444;
     --link-color: #3273dc;
-    --visited-color: #8b6fcb;
-    --code-background-color: #f2f2f2;
-    --code-color: #222;
+    --visited-color: #e331ef;
+    
+    
     --blockquote-color: #222;
   }
 
@@ -67,9 +70,9 @@ My previous experience has largely revolved around data-intensive embedded syste
       --heading-color: #eee;
       --text-color: #ddd;
       --link-color: #8cc2dd;
-      --visited-color: #8b6fcb;
-      --code-background-color: #000;
-      --code-color: #ddd;
+      --visited-color: #e331ef;
+      
+      
       --blockquote-color: #ccc;
     }
   }
@@ -97,7 +100,6 @@ My previous experience has largely revolved around data-intensive embedded syste
   h5,
   h6 {
     font-family: var(--font-main);
-    
     color: var(--heading-color);
     font-weight: 500;
   }
