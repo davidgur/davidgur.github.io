@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How do you buy a sweater? | David Gurevich</title>
+<meta name="title" content="How do you buy a sweater?" />
+<meta name="description" content="
+When I started writing this post, I was halfway through writing what&rsquo;s basically an introductory article to non-parametric anomaly detection in a data stream.
+I figure that I should write about more pressing matters, however, and so that&rsquo;s why I&rsquo;m writing this post about buying sweaters.
+What&rsquo;s so hard about buying a sweater anyways?
+This is a great question.
+Completely reasonable, and if I was a better man, I&rsquo;d be able to give you a good answer.
+Unfortunately, I am the man that I am, and it is late October in New York City, I am cold, and I still don&rsquo;t have a sweater." />
+<meta name="keywords" content="" />
+
+
+<meta property="og:url" content="https://www.gurevich.ca/how-do-you-buy-a-sweater/">
+  <meta property="og:site_name" content="David Gurevich">
+  <meta property="og:title" content="How do you buy a sweater?">
+  <meta property="og:description" content="When I started writing this post, I was halfway through writing what’s basically an introductory article to non-parametric anomaly detection in a data stream. I figure that I should write about more pressing matters, however, and so that’s why I’m writing this post about buying sweaters.
+What’s so hard about buying a sweater anyways? This is a great question. Completely reasonable, and if I was a better man, I’d be able to give you a good answer. Unfortunately, I am the man that I am, and it is late October in New York City, I am cold, and I still don’t have a sweater.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2025-10-22T21:59:18-04:00">
+    <meta property="article:modified_time" content="2025-10-22T21:59:18-04:00">
+
+
+
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="How do you buy a sweater?">
+  <meta name="twitter:description" content="When I started writing this post, I was halfway through writing what’s basically an introductory article to non-parametric anomaly detection in a data stream. I figure that I should write about more pressing matters, however, and so that’s why I’m writing this post about buying sweaters.
+What’s so hard about buying a sweater anyways? This is a great question. Completely reasonable, and if I was a better man, I’d be able to give you a good answer. Unfortunately, I am the man that I am, and it is late October in New York City, I am cold, and I still don’t have a sweater.">
+
+
+
+
+  <meta itemprop="name" content="How do you buy a sweater?">
+  <meta itemprop="description" content="When I started writing this post, I was halfway through writing what’s basically an introductory article to non-parametric anomaly detection in a data stream. I figure that I should write about more pressing matters, however, and so that’s why I’m writing this post about buying sweaters.
+What’s so hard about buying a sweater anyways? This is a great question. Completely reasonable, and if I was a better man, I’d be able to give you a good answer. Unfortunately, I am the man that I am, and it is late October in New York City, I am cold, and I still don’t have a sweater.">
+  <meta itemprop="datePublished" content="2025-10-22T21:59:18-04:00">
+  <meta itemprop="dateModified" content="2025-10-22T21:59:18-04:00">
+  <meta itemprop="wordCount" content="1315">
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <link rel="stylesheet" href="/css/syntax-light.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="/css/syntax-dark.css" media="(prefers-color-scheme: dark)">
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+  :root {
+    --width: 720px;
+    --font-main: "Work Sans", sans-serif;
+    --font-secondary: "Work Sans", sans-serif;
+    --font-scale: 1em;
+    --background-color: #eeeeee;
+    --heading-color: #444;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #e331ef;
+    
+    
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #444;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #e331ef;
+      
+      
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  body {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+    font-weight: 500;
+  }
+
+  code.has-jax {font: inherit;
+              font-size: 100%;
+              background: inherit;
+              border: inherit;
+              color: #515151;
+  }
+
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '\\[', right: '\\]', display: true},   
+        {left: '$$', right: '$$', display: true},     
+        {left: '\\(', right: '\\)', display: false},  
+      ],
+      throwOnError : false
+    });
+  });
+</script>
+
+
+
+  
+
+  
+
+  
+</head>
+
+<body>
+  <header><h2> 
+    <a href="/" class="title"> David Gurevich </a>
+        <a href="mailto:david@gurevich.ca" style="text-decoration: none; width: 1.2em;" class="fas fa-at"></a> 
+     <a href="https://www.linkedin.com/in/davidgur/" style="text-decoration: none; width: 1.2em;" class="fa fa-linkedin"></a> 
+       <a href="https://github.com/davidgur" style="text-decoration: none; width: 1.2em;" class="fa fa-github"></a>   
+       <a href="https://github.com/davidgur/resume/raw/master/resume.pdf" style="text-decoration: none; width: 1.2em;" class="far fa-file-pdf"></a> 
+</h2>
+<nav><a href="/">Home</a>
+
+
+<a href="/blog">Blog</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>How do you buy a sweater?</h1>
+<p>
+  <i>
+    <time datetime='2025-10-22'>
+      2025-10-22
+    </time>
+  </i>
+</p>
+
+<content>
+  <p><img src="sean_connery.jpg" alt="Sean Connery wearing a sweater"></p>
+<p>When I started writing this post, I was halfway through writing what&rsquo;s basically an introductory article to non-parametric anomaly detection in a data stream.
+I figure that I should write about more pressing matters, however, and so that&rsquo;s why I&rsquo;m writing this post about buying sweaters.</p>
+<h3 id="whats-so-hard-about-buying-a-sweater-anyways">What&rsquo;s so hard about buying a sweater anyways?</h3>
+<p>This is a great question.
+Completely reasonable, and if I was a better man, I&rsquo;d be able to give you a good answer.
+Unfortunately, I am the man that I am, and it is late October in New York City, I am cold, and I still don&rsquo;t have a sweater.</p>
+<p>I have been to a number of different stores, I have tried on countless sweaters, I have done my research, and yet I still have not been able to buy one.
+As I write this, I realize the absurdity of the situation, but push comes to shove <em>(credit card to the machine)</em>, I find myself unable to pull the trigger.</p>
+<h3 id="the-material">The Material</h3>
+<p>I think that moving out and living on your own teaches you a lot of things.
+You learn a lot about yourself, and you discover how you behave when you can let your autonomy run wild (within the confines of socially acceptable behaviour).</p>
+<p>One thing that I learned was how to wash different textiles.
+Synthetic fibres are easy to wash but they don&rsquo;t absorb sweat very well, so they end up smelling pretty bad after you wear them, so you have to wash them often.
+Fortunately, synthetics can be washed into oblivion and nothing bad will really happen to them.
+Cotton will absorb your sweat but it&rsquo;s like a plant, right?
+So your bacteria will kinda be there, and it&rsquo;ll grow and become stinky pretty soon.
+You can wash cotton, you just have to be careful because it&rsquo;ll shrink on you if you&rsquo;re really careless about it.
+You can also stretch cotton out though, so it&rsquo;s not too bad.
+Not all cotton garments are made equal, either.
+You can get some really nice cotton garments that are thick and will keep you very warm, or you can get a cotton t-shirt.</p>
+<p>Wool is something that apparently you don&rsquo;t need to wash often, and when you do, you have to be super gentle with it.
+Which may sound like it&rsquo;s more trouble than it&rsquo;s worth, but I&rsquo;ve kind of been sold on the idea.
+Like, you get a wool sweater, and it&rsquo;s super warm but it won&rsquo;t make you too sweaty?
+It sounds great, I&rsquo;ll be honest.
+Then you go and ask people about what kind of wool sweater you&rsquo;re supposed to get, and then some guy on the internet says that Merino wool is actually really not great?
+Okay, that&rsquo;s fine. I guess I&rsquo;ll get a wool sweater that&rsquo;s not made out of Merino wool?</p>
+<h3 id="the-cost">The Cost</h3>
+<p>This is a little bit crazy.
+You can go to Old Navy and get a cotton sweater for like $20, and it probably looks fine.
+LL Bean makes a wool sweater for like $80.
+Sure.
+Taylor Stitch has a <em>fisherman&rsquo;s</em> wool sweater for $200?
+What&rsquo;s the difference between the LL Bean sweater and the Taylor Stitch sweater?
+Do fishermen buy $200 sweaters?
+You see those pictures of cool old guys from the 60s wearing big bulky sweaters&hellip;
+Did they buy those for (the equivalent of) $200?
+I find that very hard to believe.
+The fisherman in the north of Scotland.
+Is he wearing a $200 Shetland wool fisherman&rsquo;s sweater?
+Look, I&rsquo;m not saying that it&rsquo;s impossible, or that they are below owning a $200 Shetland wool fisherman&rsquo;s sweater.
+I&rsquo;m just trying to understand what I&rsquo;m looking at.</p>
+<p>Suppose the answer to the above question is yes.
+Suppose, for the sake of <em>argument</em>, that indeed $200 is what you need to pay in order to own a Shetland wool fisherman&rsquo;s sweater, and that $200 is not a rip-off.
+Okay.
+Is owning a $200 Shetland wool sweater ten times better than owning that $20 cotton sweater from Old Navy?
+I&rsquo;m going to worry so much more about that $200 sweater than I ever will about that $20 sweater, right?
+I&rsquo;m paying more money to worry about a sweater?
+Will owning a $200 sweater make me happier than if I owned a $20 sweater?
+I&rsquo;ll have $180 less. How much happiness does $180 buy you?
+Is it more than the happiness that I will get from owning this very nice sweater?</p>
+<p>These are far too many questions for a small fitting room. I should go home and think about it.</p>
+<h3 id="the-style">The Style</h3>
+<p>I will preface this by saying that I am not someone who claims to have any authority over anything at all, ever.
+However, if I&rsquo;m going to spend \(x \in \lbrack\$20, \$200\rbrack\) on a sweater, I would at least like it to be one that looks <em>fashionable</em>.
+I suppose I already worried about how it&rsquo;s going to feel when I (kind of) decided on a material.</p>
+<p>What does it mean for a sweater to look good?
+I don&rsquo;t know if I&rsquo;ve ever looked at a sweater and thought to myself &ldquo;wow that&rsquo;s a nice sweater.&rdquo;
+I know for a fact that I&rsquo;ve looked at sweaters <em>on my body</em> and thought that they don&rsquo;t look good, but I&rsquo;ve never done that for other people.
+Surely it&rsquo;s not because other people have figured out how to buy sweaters.</p>
+<p>So you go and try on some sweaters, and some of them look good, I guess.
+Then you send a picture to some trusted sources, and they say &ldquo;no, not that one,&rdquo; and you sort of take them at their word.
+Then you find a sweater that looks <em>fine</em>, and then your trusted source also says that &ldquo;it looks fine, I guess&rdquo;, and so you look at it,
+and it&rsquo;s like $200, and then you&rsquo;re thinking whether you should be spending $200 on this thing.
+So you try to boy math it out, and you say okay this sweater will last me \(N\) years and I&rsquo;ll probably have to wash it separately, and
+it looks fine but it&rsquo;s not great.
+Then you get to thinking that maybe buying clothes is difficult because you look in the mirror and you don&rsquo;t really see what you want to see,
+and think that this sweater would look better if you were a bit more jacked.
+But that&rsquo;s neither here nor there, man, you&rsquo;re here to buy a sweater because you&rsquo;re cold now.
+You can worry about getting jacked for next summer, I guess, but right now it&rsquo;s autumn and you need a sweater now, so you have to make a decision
+whether this sweater which looks fine, I guess, is the sweater you&rsquo;re going to drop $200 on.</p>
+<p>Well, there&rsquo;s a store across the street that might have a sale soon, and, all else being equal, if this sweater was a bit cheaper, it&rsquo;ll be easier to buy.
+But also is a $150 sweater really that much easier to buy than a $200 sweater?
+Like it&rsquo;s already a lot of money to spend on an article of clothing.</p>
+<p>In the context of a $20 sweater, the difference between a $150 sweater and a $200 sweater is so tiny, that it doesn&rsquo;t even feel like it&rsquo;s worth considering.
+With the difference between a $150 sweater and a $200 sweater, you could buy two $20 sweaters!
+Maybe three if there&rsquo;s a sale!</p>
+<p>So is that the solution?
+Do you buy a $150 sweater and then two (or three) $20 sweaters?
+Is the marginal satisfaction of two (or three) $20 sweaters greater than the difference in satisfaction between the $200 sweater and the $150 sweater?</p>
+<p>Wait, how did we even get here?
+How is our sweater budget suddenly $200?
+I just need to buy a sweater.. why do I need to spend $200 on it?</p>
+<p>This is why I can&rsquo;t buy a sweater.</p>
+
+</content>
+<p>
+  
+</p>
+
+  </main>
+  <footer>
+</footer>
+
+  
+</body>
+
+</html>

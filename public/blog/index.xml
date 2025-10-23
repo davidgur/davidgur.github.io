@@ -7,8 +7,15 @@
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>Copyright © 2024, David Gurevich</copyright>
-    <lastBuildDate>Thu, 17 Jul 2025 22:33:15 -0400</lastBuildDate>
+    <lastBuildDate>Wed, 22 Oct 2025 21:59:18 -0400</lastBuildDate>
     <atom:link href="https://www.gurevich.ca/blog/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>How do you buy a sweater?</title>
+      <link>https://www.gurevich.ca/how-do-you-buy-a-sweater/</link>
+      <pubDate>Wed, 22 Oct 2025 21:59:18 -0400</pubDate>
+      <guid>https://www.gurevich.ca/how-do-you-buy-a-sweater/</guid>
+      <description>&lt;p&gt;&lt;img src=&#34;sean_connery.jpg&#34; alt=&#34;Sean Connery wearing a sweater&#34;&gt;&lt;/p&gt;&#xA;&lt;p&gt;When I started writing this post, I was halfway through writing what&amp;rsquo;s basically an introductory article to non-parametric anomaly detection in a data stream.&#xA;I figure that I should write about more pressing matters, however, and so that&amp;rsquo;s why I&amp;rsquo;m writing this post about buying sweaters.&lt;/p&gt;&#xA;&lt;h3 id=&#34;whats-so-hard-about-buying-a-sweater-anyways&#34;&gt;What&amp;rsquo;s so hard about buying a sweater anyways?&lt;/h3&gt;&#xA;&lt;p&gt;This is a great question.&#xA;Completely reasonable, and if I was a better man, I&amp;rsquo;d be able to give you a good answer.&#xA;Unfortunately, I am the man that I am, and it is late October in New York City, I am cold, and I still don&amp;rsquo;t have a sweater.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Image Inpainting with Convex Optimization with Heuristics</title>
       <link>https://www.gurevich.ca/image-inpainting-with-convex-optimization-with-heuristics/</link>

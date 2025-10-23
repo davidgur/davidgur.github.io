@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Nonparametric Quickest Change Detection using Geometric Entropy Minimization and Diffusion Maps | David Gurevich</title>
+<meta name="title" content="Nonparametric Quickest Change Detection using Geometric Entropy Minimization and Diffusion Maps" />
+<meta name="description" content="I understand that this title is quite loaded, but I promise that, by the end of this post, you will understand why they all piece together to form
+an interesting algorithm for detecting changes in data streams.
+We will proceed first by motivating the problem of change detection, and then we will see some of the ways in which it has been approached in the past.
+Then, I will introduce the idea of geometric entropy minimization, which is a (relatively) recently proposed method for performing anomaly detection in
+data.
+Finally, we will build upon the Geometric Entropy Minimization method to make it less sensitive to noise. We will do this by learning a diffusion map of
+the data, which we will see allows us to build norms that are particularly sensitive to changes in the underlying data distribution, while being robust
+to existing noise." />
+<meta name="keywords" content="" />
+
+
+<meta property="og:url" content="http://localhost:1313/nonparametric-quickest-change-detection-using-geometric-entropy-minimization-and-diffusion-maps/">
+  <meta property="og:site_name" content="David Gurevich">
+  <meta property="og:title" content="Nonparametric Quickest Change Detection using Geometric Entropy Minimization and Diffusion Maps">
+  <meta property="og:description" content="I understand that this title is quite loaded, but I promise that, by the end of this post, you will understand why they all piece together to form an interesting algorithm for detecting changes in data streams.
+We will proceed first by motivating the problem of change detection, and then we will see some of the ways in which it has been approached in the past. Then, I will introduce the idea of geometric entropy minimization, which is a (relatively) recently proposed method for performing anomaly detection in data. Finally, we will build upon the Geometric Entropy Minimization method to make it less sensitive to noise. We will do this by learning a diffusion map of the data, which we will see allows us to build norms that are particularly sensitive to changes in the underlying data distribution, while being robust to existing noise.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2025-07-28T22:17:23-04:00">
+    <meta property="article:modified_time" content="2025-07-28T22:17:23-04:00">
+
+
+
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Nonparametric Quickest Change Detection using Geometric Entropy Minimization and Diffusion Maps">
+  <meta name="twitter:description" content="I understand that this title is quite loaded, but I promise that, by the end of this post, you will understand why they all piece together to form an interesting algorithm for detecting changes in data streams.
+We will proceed first by motivating the problem of change detection, and then we will see some of the ways in which it has been approached in the past. Then, I will introduce the idea of geometric entropy minimization, which is a (relatively) recently proposed method for performing anomaly detection in data. Finally, we will build upon the Geometric Entropy Minimization method to make it less sensitive to noise. We will do this by learning a diffusion map of the data, which we will see allows us to build norms that are particularly sensitive to changes in the underlying data distribution, while being robust to existing noise.">
+
+
+
+
+  <meta itemprop="name" content="Nonparametric Quickest Change Detection using Geometric Entropy Minimization and Diffusion Maps">
+  <meta itemprop="description" content="I understand that this title is quite loaded, but I promise that, by the end of this post, you will understand why they all piece together to form an interesting algorithm for detecting changes in data streams.
+We will proceed first by motivating the problem of change detection, and then we will see some of the ways in which it has been approached in the past. Then, I will introduce the idea of geometric entropy minimization, which is a (relatively) recently proposed method for performing anomaly detection in data. Finally, we will build upon the Geometric Entropy Minimization method to make it less sensitive to noise. We will do this by learning a diffusion map of the data, which we will see allows us to build norms that are particularly sensitive to changes in the underlying data distribution, while being robust to existing noise.">
+  <meta itemprop="datePublished" content="2025-07-28T22:17:23-04:00">
+  <meta itemprop="dateModified" content="2025-07-28T22:17:23-04:00">
+  <meta itemprop="wordCount" content="2419">
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <link rel="stylesheet" href="/css/syntax-light.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="/css/syntax-dark.css" media="(prefers-color-scheme: dark)">
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+  :root {
+    --width: 720px;
+    --font-main: "Work Sans", sans-serif;
+    --font-secondary: "Work Sans", sans-serif;
+    --font-scale: 1em;
+    --background-color: #eeeeee;
+    --heading-color: #444;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #e331ef;
+    
+    
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #444;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #e331ef;
+      
+      
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  body {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+    font-weight: 500;
+  }
+
+  code.has-jax {font: inherit;
+              font-size: 100%;
+              background: inherit;
+              border: inherit;
+              color: #515151;
+  }
+
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '\\[', right: '\\]', display: true},   
+        {left: '$$', right: '$$', display: true},     
+        {left: '\\(', right: '\\)', display: false},  
+      ],
+      throwOnError : false
+    });
+  });
+</script>
+
+
+
+  
+
+  
+
+  
+</head>
+
+<body>
+  <header><h2> 
+    <a href="/" class="title"> David Gurevich </a>
+        <a href="mailto:david@gurevich.ca" style="text-decoration: none; width: 1.2em;" class="fas fa-at"></a> 
+     <a href="https://www.linkedin.com/in/davidgur/" style="text-decoration: none; width: 1.2em;" class="fa fa-linkedin"></a> 
+       <a href="https://github.com/davidgur" style="text-decoration: none; width: 1.2em;" class="fa fa-github"></a>   
+       <a href="https://github.com/davidgur/resume/raw/master/resume.pdf" style="text-decoration: none; width: 1.2em;" class="far fa-file-pdf"></a> 
+</h2>
+<nav><a href="/">Home</a>
+
+
+<a href="/blog">Blog</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>Nonparametric Quickest Change Detection using Geometric Entropy Minimization and Diffusion Maps</h1>
+<p>
+  <i>
+    <time datetime='2025-07-28'>
+      2025-07-28
+    </time>
+  </i>
+</p>
+
+<content>
+  <p>I understand that this title is quite loaded, but I promise that, by the end of this post, you will understand why they all piece together to form
+an interesting algorithm for detecting changes in data streams.</p>
+<p>We will proceed first by motivating the problem of change detection, and then we will see some of the ways in which it has been approached in the past.
+Then, I will introduce the idea of geometric entropy minimization, which is a (relatively) recently proposed method for performing anomaly detection in
+data.
+Finally, we will build upon the Geometric Entropy Minimization method to make it less sensitive to noise. We will do this by learning a diffusion map of
+the data, which we will see allows us to build norms that are particularly sensitive to changes in the underlying data distribution, while being robust
+to existing noise.</p>
+<h2 id="quickest-change-detection">Quickest Change Detection</h2>
+<p>Detecting changes in data streams is a problem that has been studied for a long time.
+This is because the problem of detecting changes in statistical properties of a system or time series is one that comes up in many different fields.
+For example, in finance, we may want to detect changes in the volatility of stock prices, or in the mean return of a portfolio.
+In engineering, we may want to detect bifurcations in the behaviour of a system, or changes in the performance of a machine.
+The list goes on, but the common theme is that we make observations that undergo a change in distribution at some point in time, and we want to detect
+that change as quickly as possible, subject to some false-alarm constraints.</p>
+<h3 id="mathematical-formulation">Mathematical Formulation</h3>
+<p>As Veeravalli and Banerjee<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> put it, the quickest change detection problem has three entities:</p>
+<ol>
+<li>a stochastic process under observation,</li>
+<li>a change point at which the statistical properties of the process undergo a change, and</li>
+<li>a decision maker who observes the process and aims to detect the change in the process.</li>
+</ol>
+<p>We aim to avoid <em>false alarms</em>, which are decisions made by the decision maker that a change has occurred when it has not.
+As such, we solve the quickest change detection problem by detecting the change point as quickly as possible, subject to a constraint on the
+probability of false alarm.</p>
+<h4 id="simple-bayesian-formulation">Simple Bayesian Formulation</h4>
+<p>Consider a discrete-time stochastic process \( \{X_n\} \), where \( X_n \in \mathbb{R} \) is the observation at time \( n \).
+As a prior, we assume that the change point is a random variable \( \Gamma \), which takes non-negative integer values, having distribution
+\( \pi_n = \mathbb{P}\{\Gamma = n\} \).
+Let \( \mathbb{P}_n \) (and correspondingly \( \mathbb{E}_n \)) be the probability measure (and expectation) when the change point is at time \( \tau = n \).
+We will define an algorithm which declares at time \( \tau \) whether a change has occurred or not.</p>
+<p>Define the average detection delay \( \text{ADD} \) as
+</p>
+\[ \text{ADD}(\tau) = \mathbb{E} \left[ (\tau - \Gamma)^+ \right] = \sum_{n=0}^{\infty} \pi_n \mathbb{E}_n \left[ (\tau - \Gamma)^+ \right] \]<p>
+and the probability of false alarm \( \text{PFA} \) as
+</p>
+\[ \text{PFA}(\tau) = \mathbb{P}(\tau < \Gamma) = \sum_{n=0}^{\tau-1} \pi_n \mathbb{P}_n(\tau < \Gamma). \]<p>
+Thus, the Bayesian quickest change detection problem is to minimize \(\text{ADD}\) subject to a constraint on \(\text{PFA}\).
+We can define the class of stopping times that satisfy a constraint \(\alpha\) on \(\text{PFA}\) as
+</p>
+\[ \mathcal{C}_{\alpha} = \{ \tau : \text{PFA}(\tau) \leq \alpha \}. \]<p>
+Then we get Shiryaev&rsquo;s formulation of the quickest change detection problem:</p>
+<blockquote>
+<p>For a given \(\alpha\), find a stopping time \(\tau^* \in \mathcal{C}_{\alpha}\) that minimizes \(\text{ADD}(\tau))\).</p></blockquote>
+<p>For simplicity, we consider the i.i.d model for the observations, and assume that \(\Gamma\) is a geometric random variable with parameter \( \rho \in (0,1) \).
+That is,
+</p>
+\[ \pi_n = \mathbb{P}\{\Gamma = n\} = (1-\rho)^{n-1} \rho, \quad n \geq 1. \]<p>Let \( X_1^n = (X_1, ..., X_n) \) be the observations up to time \( n \).
+We also let
+</p>
+\[ p_n = \mathbb{P}(\Gamma \leq n | X_1^n) \]<p>
+be the posterior probability at time \(n\) that the change has taken place given the observation up to time \(n\).
+We can use Bayes&rsquo; rule to show that \( p_n \) satisfies the recursion
+</p>
+\[ p_{n+1} = \Phi(X_{n+1}, p_n), \]<p>
+where
+</p>
+\[ \Phi(X_{n+1}, p_n) = \dfrac{ \tilde{p}_n L(X_{n+1}) }{ \tilde{p}_n L(X_{n+1}) + (1 - \tilde{p}_n)}, \]<p>
+where \( \tilde{p}_n = p_n + (1 - p_n) \rho\), and
+</p>
+\[ L(X_{n+1}) = \dfrac{ f_1(X_{n+1}) }{ f_0(X_{n+1}) } \]<p>
+is the likelihood ratio of the observations, where \( f_0 \) and \( f_1 \) are the densities of the observations before and after the change, respectively.
+We define \( p_0 = 0 \).</p>
+<p>We choose an optimal stopping time
+</p>
+\[ \tau_s = \inf \{ n \geq 1 : p_n \geq A \}, \]<p>
+where \( A \in (0,1) \) is a threshold that we choose based on the desired probability of false alarm.</p>
+<p>Now let
+</p>
+\[ \Lambda_n = \dfrac{p_n}{(1 - p_n)} \]<p>
+and
+</p>
+\[ R_{n,p} = \dfrac{ p_n }{ (1 - p_n) \rho}. \]<p>
+Note that \( \Lambda_n \) is the likelihood ratio of the hypotheses &ldquo;\(H_1: \Gamma \leq n\)&rdquo; and &ldquo;\(H_0: \Gamma > n\)&rdquo; averaged over the change point:
+</p>
+\[
+\begin{align*}
+    \Lambda_n &= \dfrac{ p_n }{(1 - p_n) } \\
+    &= \dfrac{ \mathbb{P}(\Gamma \leq n | X_1^n) }{ \mathbb{P}(\Gamma > n | X_1^n) } \\
+    &= \dfrac{ \sum_{k=1}^n (1 - \rho)^{k-1} \rho \prod_{i=1}^{k-1} f_0 (X_i) \prod_{i=k}^n f_1 (X_i) }{(1 - \rho)^n \prod_{i=1}^n f_0(X_i) } \\
+    &= \dfrac{1}{(1 - \rho)^n} \sum_{k=1}^n (1 - \rho)^{k-1} \rho \prod_{i=k}^n L(X_i).
+\end{align*}
+\]<p>
+Also, \(R_{n,p}\) is just a scaled version of \(\Lambda_n\):
+</p>
+\[ R_{n,p} = \dfrac{1}{(1 - \rho)^n} \sum_{k=1}^n (1 - \rho)^{k-1} \prod_{i=k}^n L(X_i). \]<p>
+Notably, \(R_{n,p}\) can be computed recursively as
+</p>
+\[ R_{n+1,p} = \dfrac{1 + R_{n,p}}{1 - \rho} L(X_{n+1}), \quad R_{0,p} = 0. \]<p>Thus, the Shiryaev algorithm gives us a stopping time
+</p>
+\[ \tau_s = \inf \{n \geq 1 : R_{n,p} \geq \frac{a}{\rho} \}, \]<p>
+with \(a = \frac{A}{1 - A}\).
+Choosing \(A\) such that \(\text{PFA}(\tau_s) \leq \alpha\) gives us a stopping time that minimizes the average detection delay subject to the false alarm constraint.
+The optimal threshold \(A\) must be solved numerically, and is typically done with dynamic programming. See Veeravalli and Banerjee<sup id="fnref1:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> for more details.</p>
+<p>Note that this Bayesian formulation, although simple, requires:</p>
+<ol>
+<li>knowledge of the distributions before and after the change, which is often not available in practice, and</li>
+<li>the assumption that the change point is a geometric random variable, which may not be true in practice.</li>
+</ol>
+<p>We can relax assumption number 2 by using a minimax approach, such as CuSum.</p>
+<h4 id="cusum-approach">CuSum Approach</h4>
+<p>The CuSum (Cumulative Sum) approach is a heuristic that is often used in practice to detect changes in data streams.
+The motivation for CuSum comes from the fact that, if we let \(X\) represent the generic random variable for the i.i.d model with \(f_0 \) and \(f_1\) as the densities before and after the change, respectively, then
+</p>
+\[ \mathbb{E}_{\infty} [\log L(X)] = -D(f_0 || f_1) < 0, \]<p>
+and
+</p>
+\[ \mathbb{E}_1 [\log L(X)] = D(f_1 || f_0) > 0, \]<p>
+where \(D(f_0 || f_1)\) is the Kullback-Leibler divergence between the two distributions, i.e.,
+</p>
+\[ D(f_1 || f_0) = \int f_1(x) \log \left( \frac{f_1(x)}{f_0(x)} \right) dx. \]<p>
+Here, \( \mathbb{E}_{\infty} \) and \( \mathbb{E}_1 \) are the expectations when the change point never occurs, and when it occurs at time 1, respectively.
+Thus, after time point \( \gamma \), the log likelihood of the observation \(X\) is more likely to be above a given threshold.</p>
+<p>By the law of large numbers,
+</p>
+\[ \lim_{n \to \infty} \sum_{i=1}^n \log L(X_i) = \infty. \]<p>
+Thus, if we define \(S_n = \sum_{i=1}^n \log L(X_i)\) as the accumulated log likelihood sum, then before \(\gamma\), \(S_n\) evolves towards \(-\infty\), and after \(\gamma\), it evolves towards \(+\infty\).
+Therefore, we detect the change in drift and call that the change point, when $S_n$ exceeds a threshold \(b\):
+</p>
+\[ \tau_C = \inf \left\{ n \geq 1 : \left( S_n - \min_{1 \leq k \leq n} S_k \right) \geq b \right\}, \]<p>
+where \(b\) is a positive threshold that we choose based on the desired probability of false alarm.</p>
+<p>Note that
+</p>
+\[ S_n - \min_{1 \leq k \leq n} S_k = \max_{0 \leq k \leq n} \sum_{i=k+1}^n \log L(X_i) = \max_{1 \leq k \leq n + 1} \sum_{i=k}^n \log L(X_i). \]<p>
+Thus, we can just as well write
+</p>
+\[ \tau_C = \inf \{ n \geq 1 : W_n \geq b \}, \]<p>
+where
+</p>
+\[ W_n = \max_{1 \leq k \leq n + 1} \sum_{i=k}^n \log L(X_i). \]<p>
+Note that \(W_n\) also has a nice recursive form:
+</p>
+\[ W_{n+1} = (W_n + \log L(X_{n+1}))^+, \quad W_0 = 0. \]<p>The simplicity of the CuSum approach makes it a popular choice for change detection in practice, particularly when the distributions before and after the change are known.
+This is, however, a limitation, as a priori knowledge of the pre- and post-change distributions is often not available in practice.</p>
+<p>To address this limitation, we will now introduce the idea of geometric entropy minimization, which is a method for performing anomaly detection in data without requiring knowledge of the underlying distributions.</p>
+<h2 id="geometric-entropy-minimization">Geometric Entropy Minimization</h2>
+<p>First, we consider a framework for general anomaly detection.</p>
+<h3 id="anomaly-detection-framework">Anomaly Detection Framework</h3>
+<p>Let \(f_0\) denote the nominal probability distribution of \(X_t\) before any changes.
+Let \( f \) denote the probability distirbution of the data stream \(X_t\) at time \(t\).
+Then we can formulate the anomaly detection problem as a binary hypothesis testing problem:
+</p>
+\[
+\begin{align*}
+H_0 &: f = f_0 \quad \forall t \\
+H_1 &: f = f_0, t < \tau, \text{ and } f \neq f_0, t \geq \tau,
+\end{align*}
+\]<p>
+where \( \tau \) denotes the unknown change point.</p>
+<h4 id="minimum-volume-set-and-its-approximation">Minimum Volume Set, and its approximation</h4>
+<p>We may declare a point to be an outlier by considering the likelihood under the nominal distribution.
+That is, we can say a data point is an outlier if it lies outside the most compact set of data points under the nominal distribution, called the <em>minimum volume set</em>.
+The minimum volume set of level \(\alpha\) is given by
+</p>
+\[ \Omega_{\alpha} = \arg \min_{\mathcal{A}} \int_{\mathcal{A}} \text{d} x \text{ s.t. } \int_{\mathcal{A}} f_0(x) \text{d} x \geq 1 - \alpha, \]<p>
+where \(x\) is the data point, and \(\mathcal{A}\) is the acceptance region for \(H_0\) in which a data point is not considered an outlier, and \(\alpha\) is the significance level.
+In effect, \( \alpha\) is a constraint on the false alarm rate.</p>
+<p>\( \Omega_{\alpha} \) is called the minimum volume set because it minimizes the Lebesgue measure (volume) in \(\mathbb{R}^d\) among the subsets of data points that satisfy the false alarm constraint \(\alpha\).
+That is, it minimizes \(\mathbb{P}\{\phi = H_0 | H_1 \} \), and in so doing, maximizes the detection probability \(\mathbb{P}\{\phi = H_1 | H_1\}\).</p>
+<p>In general, it is computationally intractable to compute the minimum volume set, \( \Omega_{\alpha}\).
+Thus, there have been many approaches proposed to approximate it.
+One such approach is called <em>Geometric Entropy Minmization</em> (GEM)<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>.</p>
+<p>GEM approximates the minimum volume set using minimum coverings of subsets of points in a nominal training set.
+Let \(\mathcal{X}^N\) be an \(N\)-point training set of data points sampled from the nominal distribution \(f_0\).
+We form a \(k\)-nearest-neighbor graph \(G = (\bar{\mathcal{X}}^N, E)\) on the training set, with \(K\) vertices \(\bar{\mathcal{X}}^N \in \mathcal{X}^N\) and \(kK\) edges
+</p>
+\[ E = \{ e_{i(l)} : i = 1, ..., K; l = 1, ..., k \}, \]<p>
+where the edge length \(|e_{i(l)}|\) is the Euclidean distance between the \(i\)-th vertex and its \(l\)-th nearest neighbor.
+The vertices \(\bar{\mathcal{X}}^N\) are points chosen from the training set that minimize the total weighted edge length
+</p>
+\[ \mathcal{L}_k \left( \bar{\mathcal{X}}^N \right) = \sum_{i=1}^K \sum_{l=1}^k |e_{i(l)}|^{\gamma}, \]<p>
+over all possible \(K\)-point subsets of \(\mathcal{X}^N\), where \(\gamma > 0\) is the weight parameter.
+Hero<sup id="fnref1:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> shows that \(\bar{\mathcal{X}}^N\) converges to the minimum volume set \(\Omega_{\alpha}\) as \(N \to \infty\).</p>
+<p>Note that the above problem has exponential complexity in \(K\), and thus is not computationally tractable for the sort of large datasets that we may encounter in practice.
+For this reason, we consider a bipartite kNN graph, which leads to an approach called BP-GEM.</p>
+<p>First, we randomly partition the training set \(\mathcal{X}^N\) into two sets \(\mathcal{X^{N_1}}\) and \(\mathcal{X^{N_2}}\), with \(N_1 + N_2 = N\).
+We then find vertices \(\bar{\mathcal{X}}^{N_1} \in \mathcal{X^{N_1}}\) which minimizes the total weighted edge length
+</p>
+\[ \mathcal{L}_k \left( \mathcal{X}_K^{N_1}, \mathcal{X}^{N_2} \right) = \sum_{i=1}^{K} \sum_{l=k-s+1}^{k} |e_{i(l)}|^{\gamma}, \]<p>
+over all possible \(K\)-point subsets of \(\mathcal{X^{N_1}}\), where \(1 \leq s \leq k\) is some fixed number.
+The positive effect of this bipartite approach is that now if we get a new data point \(X_t\), we don&rsquo;t need to determine new representative points \(\bar{\mathcal{X}}^{N_1 + 1}\) since we choose the neighbours from the set \(\mathcal{X^{N_2}}\) which is fixed.
+Thus the total edge lengths \( \sum_{l=k-s+1}^{k} |e_{i(l)}|^{\gamma} \)
+does not change, and we only need to compute the total edge length for the new data point, and then choose the \(K\) points with smallest total edge lengths from the set \(\bar{\mathcal{X}}^{N_1} \cup \{X_t\}\).</p>
+<h4 id="the-change-detection-algorithm">The Change Detection Algorithm</h4>
+<p>Now that we have a way to approximate the minimum volume set, we can use it to perform change detection.
+Namely, we define a function that compares the distance of a new data point \(X_t\) to the \(K\)th point in \(\bar{\mathcal{X}}^{N_1}\), which we note has the largest total edge length in \(\bar{\mathcal{X}}^{N_1}\).
+This function is given by
+</p>
+\[ D_t = \sum_{l=k-s+1}^{k} |e_{X_t(l)}|^{\gamma} - |e_{X_{(K)}(l)}|^{\gamma}. \]<p>An important connection between the discrepancy measure \(D_t\) is that as \(N_1, N_2 \to \infty\), \(D_t\) converges to the log-likelihood ratio of the hypotheses \(H_0\) and \(H_1\):
+</p>
+\[ D_t \to \log \left( \frac{f_0(x_{\alpha})}{f_0(X_t)} \right). \]<p>
+This means that we can use \(D_t\) similar to how we used the log-likelihood ratio in the CuSum approach.</p>
+<p>Note that in order to compute these distances, we use the Euclidean distance.
+In high dimensions, however, the Euclidean distance starts to lose its discriminative power.
+At this point, we consider defining a new distance measure that is more robust to noise, and which can be learned from the data.</p>
+<h2 id="diffusion-maps">Diffusion Maps</h2>
+<p>Diffusion maps<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup> allow us to learn efficient geometric representations of complicated data distributions.</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>Veeravalli, V. V., &amp; Banerjee, T. (2014). Quickest change detection. In Academic press library in signal processing (Vol. 3, pp. 209-255). Elsevier.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a>&#160;<a href="#fnref1:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p>Hero, A. (2006). Geometric entropy minimization (GEM) for anomaly detection and localization. Advances in neural information processing systems, 19.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a>&#160;<a href="#fnref1:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p>Coifman, R. R., &amp; Lafon, S. (2006). Diffusion maps. Applied and computational harmonic analysis, 21(1), 5-30.&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+
+</content>
+<p>
+  
+</p>
+
+  </main>
+  <footer>
+</footer>
+
+  
+</body>
+
+</html>
