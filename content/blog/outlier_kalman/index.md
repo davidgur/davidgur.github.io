@@ -55,7 +55,7 @@ a zero mean Gaussian distribution with some covariance, \(S\).
 We can actually calculate \(S\).
 \[
     \begin{align*} S &= \text{Cov}(y) \\
-                     &= \text{Cov}(z) - \text{Cov}(H x_{t|t-1}) \\
+                     &= \text{Cov}(z) + \text{Cov}(H x_{t|t-1}) \\
                      &= R + H \Sigma_{t|t-1} H^T,
     \end{align*}
 \]
