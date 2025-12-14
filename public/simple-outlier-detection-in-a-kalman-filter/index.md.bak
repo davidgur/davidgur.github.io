@@ -65,7 +65,7 @@ Now since we have a point, \(y\), and the covariance of the innovation, \(S\), w
 Essentially, the distance between the point and the distribution.
 The distance is given by
 \[ d^2 = y^T S^{-1} y. \]
-What's nice about the Mahalanobis distance is that \(d^2\) follows a \(\chi_n^2\) distribution,
+What's nice about the Mahalonobis distance is that \(d^2\) follows a \(\chi_n^2\) distribution,
 where \(n\) is the dimension of \(y\).
 This proof falls out quite nicely when you try to take a multivariate approach to proving that the sum of squared residuals inversely scaled by the
 variance also follows a \(\chi^2\) distribution.
@@ -73,7 +73,7 @@ variance also follows a \(\chi^2\) distribution.
 What this means is that you can design a gate for highly unlikely measurements.
 For instance if we let \(D^2 \sim \chi^2_2\), then we have \(\mathbb{P}(D^2 > 9.21) = 0.01\).
 This means that we can reject cases where \(d^2 > 9.21\), because, given all that we know about the system at this moment in time,
-there is less than a \(1\%\) probability of that measurement occurring.
+there is less than a \(1\%\) probability of that measurement occuring.
 
 In code, this might look something like the following:
 ```python
@@ -96,7 +96,7 @@ Depending on the expected experience, you might also want this to trigger an inc
 error covariance or the sensor error covariance, so that you can demonstrate more uncertainty in your final estimate.
 
 I think it's also worth noting that you shouldn't use this as a crutch in critical situations,
-but I'd hope that if you're reading this and designing mission-critical systems, you don't take advice from a blog in any case.
+but I'd hope that if you're reading this and designin mission-critical systems, you don't take advice from a blog in any case.
 
 In my experience, this method works well for cases where you want to deliver smooth measurements while
 having faulty sensors that are outside of your control.

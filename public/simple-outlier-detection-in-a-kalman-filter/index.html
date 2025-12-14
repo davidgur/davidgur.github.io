@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Simple Outlier Detection in a Kalman Filter | David Gurevich</title>
+<meta name="title" content="Simple Outlier Detection in a Kalman Filter" />
+<meta name="description" content="I&rsquo;ve honestly spent a lot of time thinking about outliers and change detection in real-time data streams.
+You can get into some pretty serious rabbit holes when thinking about this stuff.
+If you&rsquo;re not careful, you might accidentally end up in non-parametric land
+with quickest change detection or some other crazy ideas1.
+I think something a bit more down-to-earth2 and maybe more applicable to our day-to-day work as scientists
+and engineers is the Kalman filter which takes sequential
+measurements of some underlying process (where the measurement and process errors are Gaussian) and comes up,
+basically, with increasingly precise estimates of the underlying value." />
+<meta name="keywords" content="" />
+
+
+<meta property="og:url" content="https://www.gurevich.ca/simple-outlier-detection-in-a-kalman-filter/">
+  <meta property="og:site_name" content="David Gurevich">
+  <meta property="og:title" content="Simple Outlier Detection in a Kalman Filter">
+  <meta property="og:description" content="I’ve honestly spent a lot of time thinking about outliers and change detection in real-time data streams. You can get into some pretty serious rabbit holes when thinking about this stuff. If you’re not careful, you might accidentally end up in non-parametric land with quickest change detection or some other crazy ideas1.
+I think something a bit more down-to-earth2 and maybe more applicable to our day-to-day work as scientists and engineers is the Kalman filter which takes sequential measurements of some underlying process (where the measurement and process errors are Gaussian) and comes up, basically, with increasingly precise estimates of the underlying value.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="blog">
+    <meta property="article:published_time" content="2025-12-13T00:10:57-05:00">
+    <meta property="article:modified_time" content="2025-12-13T00:10:57-05:00">
+
+
+
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Simple Outlier Detection in a Kalman Filter">
+  <meta name="twitter:description" content="I’ve honestly spent a lot of time thinking about outliers and change detection in real-time data streams. You can get into some pretty serious rabbit holes when thinking about this stuff. If you’re not careful, you might accidentally end up in non-parametric land with quickest change detection or some other crazy ideas1.
+I think something a bit more down-to-earth2 and maybe more applicable to our day-to-day work as scientists and engineers is the Kalman filter which takes sequential measurements of some underlying process (where the measurement and process errors are Gaussian) and comes up, basically, with increasingly precise estimates of the underlying value.">
+
+
+
+
+  <meta itemprop="name" content="Simple Outlier Detection in a Kalman Filter">
+  <meta itemprop="description" content="I’ve honestly spent a lot of time thinking about outliers and change detection in real-time data streams. You can get into some pretty serious rabbit holes when thinking about this stuff. If you’re not careful, you might accidentally end up in non-parametric land with quickest change detection or some other crazy ideas1.
+I think something a bit more down-to-earth2 and maybe more applicable to our day-to-day work as scientists and engineers is the Kalman filter which takes sequential measurements of some underlying process (where the measurement and process errors are Gaussian) and comes up, basically, with increasingly precise estimates of the underlying value.">
+  <meta itemprop="datePublished" content="2025-12-13T00:10:57-05:00">
+  <meta itemprop="dateModified" content="2025-12-13T00:10:57-05:00">
+  <meta itemprop="wordCount" content="948">
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <link rel="stylesheet" href="/css/syntax-light.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="/css/syntax-dark.css" media="(prefers-color-scheme: dark)">
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+  :root {
+    --width: 720px;
+    --font-main: "Work Sans", sans-serif;
+    --font-secondary: "Work Sans", sans-serif;
+    --font-scale: 1em;
+    --background-color: #eeeeee;
+    --heading-color: #444;
+    --text-color: #444;
+    --link-color: #3273dc;
+    --visited-color: #e331ef;
+    
+    
+    --blockquote-color: #222;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #444;
+      --heading-color: #eee;
+      --text-color: #ddd;
+      --link-color: #8cc2dd;
+      --visited-color: #e331ef;
+      
+      
+      --blockquote-color: #ccc;
+    }
+  }
+
+  body {
+    font-family: var(--font-secondary);
+    font-size: var(--font-scale);
+    margin: auto;
+    padding: 20px;
+    max-width: var(--width);
+    text-align: left;
+    background-color: var(--background-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: var(--text-color);
+  }
+
+  body {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-main);
+    color: var(--heading-color);
+    font-weight: 500;
+  }
+
+  code.has-jax {font: inherit;
+              font-size: 100%;
+              background: inherit;
+              border: inherit;
+              color: #515151;
+  }
+
+
+  a {
+    color: var(--link-color);
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  nav a {
+    margin-right: 8px;
+  }
+
+  strong,
+  b {
+    color: var(--heading-color);
+  }
+
+  button {
+    margin: 0;
+    cursor: pointer;
+  }
+
+  time {
+    font-family: monospace;
+    font-style: normal;
+    font-size: 15px;
+  }
+
+  main {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px dashed;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    font-family: monospace;
+    padding: 2px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: var(--code-color);
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px 0;
+    text-align: center;
+  }
+
+  .title:hover {
+    text-decoration: none;
+  }
+
+  .title h1 {
+    font-size: 1.5em;
+  }
+
+  .inline {
+    width: auto !important;
+  }
+
+  .highlight,
+  .code {
+    padding: 1px 15px;
+    background-color: var(--code-background-color);
+    color: var(--code-color);
+    border-radius: 3px;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    overflow-x: auto;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: var(--visited-color);
+  }
+
+</style>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: '\\[', right: '\\]', display: true},   
+        {left: '$$', right: '$$', display: true},     
+        {left: '\\(', right: '\\)', display: false},  
+      ],
+      throwOnError : false
+    });
+  });
+</script>
+
+
+
+  
+
+  
+
+  
+</head>
+
+<body>
+  <header><h2> 
+    <a href="/" class="title"> David Gurevich </a>
+        <a href="mailto:david@gurevich.ca" style="text-decoration: none; width: 1.2em;" class="fas fa-at"></a> 
+     <a href="https://www.linkedin.com/in/davidgur/" style="text-decoration: none; width: 1.2em;" class="fa fa-linkedin"></a> 
+       <a href="https://github.com/davidgur" style="text-decoration: none; width: 1.2em;" class="fa fa-github"></a>   
+       <a href="https://github.com/davidgur/resume/raw/master/resume.pdf" style="text-decoration: none; width: 1.2em;" class="far fa-file-pdf"></a> 
+</h2>
+<nav><a href="/">Home</a>
+
+
+<a href="/blog">Blog</a>
+
+</nav>
+</header>
+  <main>
+
+<h1>Simple Outlier Detection in a Kalman Filter</h1>
+<p>
+  <i>
+    <time datetime='2025-12-13'>
+      2025-12-13
+    </time>
+  </i>
+</p>
+
+<content>
+  <p>I&rsquo;ve honestly spent a lot of time thinking about outliers and change detection in real-time data streams.
+You can get into some pretty serious rabbit holes when thinking about this stuff.
+If you&rsquo;re not careful, you might accidentally end up in non-parametric land
+with <a href="https://arxiv.org/abs/1210.5552">quickest change detection</a> or some other crazy ideas<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>.</p>
+<p>I think something a bit more down-to-earth<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> and maybe more applicable to our day-to-day work as scientists
+and engineers is the <a href="https://en.wikipedia.org/wiki/Kalman_filter">Kalman filter</a> which takes sequential
+measurements of some underlying process (where the measurement and process errors are Gaussian) and comes up,
+basically, with increasingly precise estimates of the underlying value.</p>
+<p>I want to assume some familiarity with the Kalman filter in this post, otherwise I&rsquo;ll never actually finish
+writing this thing.
+What I aim to do here is to give you a tiny tool in your toolbox that you can apply when building a Kalman
+filter in your own work.</p>
+<p>The assumption that the measurement and process errors are jointly Gaussian<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup> is sometimes incorrect and
+it is beyond your control to actually make the correction.
+One instance is if the sensor you&rsquo;re using has some sort of failure mode.
+For instance, if your sensor is some sort of positioning system, it might actually have several possible sources
+of information from which it can determine your position, for example:</p>
+<ol>
+<li>a GNSS system, like GPS, or</li>
+<li>mulitlateration with the help of nearby cell towers, or</li>
+<li>WiFi fingerprinting.</li>
+</ol>
+<p>If you are in a place where GPS reception might be bad, which in large cities happens quite often, your phone might
+be estimating your position based on other factors, like your proximity to known cell towers.
+The errors here can get huge, and these failure modes might result in huge jumps.
+I&rsquo;m sure you can imagine some other applications where your sensor might have failure modes.
+A thermometer that&rsquo;s been reading 26 degrees celsius for hours might accidentally jump up to 255 degrees celsius for
+a second.
+Even if the device combusted, I think that your first intuition as an engineer would be to reject that measurement.</p>
+<p>Fortunately, the Kalman filter gives us the tools necessary to perform an uncertainty calculation on incoming measurements.</p>
+<p>Suppose we have a new measurement at time \(t\), call it \(z_t\).
+The <em>innovation</em> in measurement \(z_t\) is given by
+</p>
+\[ y_t = z_t - H x_{t|t-1}. \]<p>
+We say innovation because the idea is that \(H x_{t|t-1}\) is supposed to contain all the information that we have about the system
+up to time \(t\).
+You can almost think about it as \(y\) being orthogonal to the vector space of all known information, \(H x_{t|t-1}\).</p>
+<p>Now, in the normal case, if you made the right sort of assumptions about your sensor, you will note that \(y\) is actually supposed to have
+a zero mean Gaussian distribution with some covariance, \(S\).
+We can actually calculate \(S\).
+</p>
+\[
+    \begin{align*} S &= \text{Cov}(y) \\
+                     &= \text{Cov}(z) - \text{Cov}(H x_{t|t-1}) \\
+                     &= R + H \Sigma_{t|t-1} H^T,
+    \end{align*}
+\]<p>
+where \(\Sigma_{t|t-1}\) is the covariance of the estimate at time \(t\).</p>
+<p>Now since we have a point, \(y\), and the covariance of the innovation, \(S\), we can find the <a href="https://en.wikipedia.org/wiki/Mahalanobis_distance">Mahalanobis distance</a>.
+Essentially, the distance between the point and the distribution.
+The distance is given by
+</p>
+\[ d^2 = y^T S^{-1} y. \]<p>
+What&rsquo;s nice about the Mahalanobis distance is that \(d^2\) follows a \(\chi_n^2\) distribution,
+where \(n\) is the dimension of \(y\).
+This proof falls out quite nicely when you try to take a multivariate approach to proving that the sum of squared residuals inversely scaled by the
+variance also follows a \(\chi^2\) distribution.</p>
+<p>What this means is that you can design a gate for highly unlikely measurements.
+For instance if we let \(D^2 \sim \chi^2_2\), then we have \(\mathbb{P}(D^2 > 9.21) = 0.01\).
+This means that we can reject cases where \(d^2 > 9.21\), because, given all that we know about the system at this moment in time,
+there is less than a \(1\%\) probability of that measurement occurring.</p>
+<p>In code, this might look something like the following:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">    <span class="n">y</span> <span class="o">=</span> <span class="n">z</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">    <span class="n">S</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">P</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="o">.</span><span class="n">T</span> <span class="o">+</span> <span class="n">R</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">    <span class="n">K</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">P</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">    <span class="c1"># Mahalanobis gate</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">    <span class="n">maha2</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">S</span><span class="p">)</span> <span class="o">@</span> <span class="n">y</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">    <span class="n">threshold</span> <span class="o">=</span> <span class="mf">9.210</span> <span class="c1"># chi-square 2 DOF, 99% confidence</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">
+</span></span><span class="line"><span class="ln">10</span><span class="cl">    <span class="k">if</span> <span class="n">maha2</span> <span class="o">&lt;=</span> <span class="n">threshold</span><span class="p">:</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">K</span> <span class="o">@</span> <span class="n">y</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">        <span class="bp">self</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">K</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">)</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">P</span>
+</span></span></code></pre></div><p>This code will flat-out ignore measurements that don&rsquo;t make it past the gate.
+Depending on the expected experience, you might also want this to trigger an increase in either the process
+error covariance or the sensor error covariance, so that you can demonstrate more uncertainty in your final estimate.</p>
+<p>I think it&rsquo;s also worth noting that you shouldn&rsquo;t use this as a crutch in critical situations,
+but I&rsquo;d hope that if you&rsquo;re reading this and designing mission-critical systems, you don&rsquo;t take advice from a blog in any case.</p>
+<p>In my experience, this method works well for cases where you want to deliver smooth measurements while
+having faulty sensors that are outside of your control.</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>These ideas are not actually crazy, they&rsquo;re very cool and something I want to work with more.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p>The joke here is the <a href="https://ntrs.nasa.gov/api/citations/19860003843/downloads/19860003843.pdf">connection of the Kalman filter to the space program</a>.&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p>The assumption isn&rsquo;t really about the errors being Gaussian, it&rsquo;s more about having conditions necessary so that the minimum mean square error (MMSE) estimator is linear and is indeed the optimal estimator. This just happens to be the case when the process noise and the measurement noise is jointly Gaussian.&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+
+</content>
+<p>
+  
+</p>
+
+  </main>
+  <footer>
+</footer>
+
+  
+</body>
+
+</html>
