@@ -7,8 +7,15 @@
     <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>Copyright © 2024, David Gurevich</copyright>
-    <lastBuildDate>Wed, 22 Oct 2025 21:59:18 -0400</lastBuildDate>
+    <lastBuildDate>Sat, 13 Dec 2025 00:10:57 -0500</lastBuildDate>
     <atom:link href="https://www.gurevich.ca/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Simple Outlier Detection in a Kalman Filter</title>
+      <link>https://www.gurevich.ca/simple-outlier-detection-in-a-kalman-filter/</link>
+      <pubDate>Sat, 13 Dec 2025 00:10:57 -0500</pubDate>
+      <guid>https://www.gurevich.ca/simple-outlier-detection-in-a-kalman-filter/</guid>
+      <description>&lt;p&gt;I&amp;rsquo;ve honestly spent a lot of time thinking about outliers and change detection in real-time data streams.&#xA;You can get into some pretty serious rabbit holes when thinking about this stuff.&#xA;If you&amp;rsquo;re not careful, you might accidentally end up in non-parametric land&#xA;with &lt;a href=&#34;https://arxiv.org/abs/1210.5552&#34;&gt;quickest change detection&lt;/a&gt; or some other crazy ideas&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;&#xA;&lt;p&gt;I think something a bit more down-to-earth&lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt; and maybe more applicable to our day-to-day work as scientists&#xA;and engineers is the &lt;a href=&#34;https://en.wikipedia.org/wiki/Kalman_filter&#34;&gt;Kalman filter&lt;/a&gt; which takes sequential&#xA;measurements of some underlying process (where the measurement and process errors are Gaussian) and comes up,&#xA;basically, with increasingly precise estimates of the underlying value.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>How do you buy a sweater?</title>
       <link>https://www.gurevich.ca/how-do-you-buy-a-sweater/</link>

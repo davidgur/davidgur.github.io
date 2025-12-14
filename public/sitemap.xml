@@ -3,10 +3,13 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://www.gurevich.ca/</loc>
-    <lastmod>2025-10-22T21:59:18-04:00</lastmod>
+    <lastmod>2025-12-13T00:10:57-05:00</lastmod>
   </url><url>
     <loc>https://www.gurevich.ca/blog/</loc>
-    <lastmod>2025-10-22T21:59:18-04:00</lastmod>
+    <lastmod>2025-12-13T00:10:57-05:00</lastmod>
+  </url><url>
+    <loc>https://www.gurevich.ca/simple-outlier-detection-in-a-kalman-filter/</loc>
+    <lastmod>2025-12-13T00:10:57-05:00</lastmod>
   </url><url>
     <loc>https://www.gurevich.ca/how-do-you-buy-a-sweater/</loc>
     <lastmod>2025-10-22T21:59:18-04:00</lastmod>
