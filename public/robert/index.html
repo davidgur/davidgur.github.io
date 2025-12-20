@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Robertgotchi</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="tamagotchi">
+    <div class="screen">
+      <img id="petImage" src="images/content.png" alt="Pet" />
+      <div class="status" id="statusText">Feeling content</div>
+    </div>
+
+    <div class="bars">
+      <div class="bar">
+        <span>Hunger</span>
+        <div class="meter"><div class="meter-fill" id="hungerBar"></div></div>
+      </div>
+      <div class="bar">
+        <span>Energy</span>
+        <div class="meter"><div class="meter-fill" id="energyBar"></div></div>
+      </div>
+      <div class="bar">
+        <span>Health</span>
+        <div class="meter"><div class="meter-fill" id="healthBar"></div></div>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button id="feedBtn">🍎 Feed</button>
+      <button id="sleepBtn">😴 Sleep</button>
+      <button id="medicineBtn">💊 Medicine</button>
+      <button id="playBtn">🎮 Play</button>
+    </div>
+  </div>
+
+  <script type="module" src="script.js"></script>
+
+</body>
+</html>
+
